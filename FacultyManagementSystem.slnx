@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="FacultyManagementSystem/FacultyManagementSystem.csproj" />
+  <Project Path="FMS.Laboratory/FMS.Laboratory.csproj" />
+  <Project Path="FMS.Library/FMS.Library.csproj" />
+  <Project Path="FMS.Workshop/FMS.Workshop.csproj" />
+  <Project Path="FMSdataLayer/FMS.Faculty.csproj" />
+</Solution>
