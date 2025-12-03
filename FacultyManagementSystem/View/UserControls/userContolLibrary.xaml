@@ -1,0 +1,49 @@
+﻿<UserControl x:Class="FacultyManagementSystem.View.UserControls.userContolLibrary"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FacultyManagementSystem.View.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="533">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Text="Library Management" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5"/>
+
+        <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center" Margin="0,20,0,0" >
+            <Label Content="Book Title:"/>
+            <TextBox Width="260" Margin="5" Text="{Binding BookTitle}"/>
+            <Label Content="Author:"/>
+            <TextBox Margin="5" Text="{Binding Author}"/>
+            <Label Content="ISBN:"/>
+            <TextBox Margin="5" Text="{Binding ISBN}"/>
+            <Label Content="Description:"/>
+            <TextBox Margin="5" Text="{Binding Description}"/>
+            <Label Content="Barcode:"/>
+            <TextBox Margin="5" Text="{Binding Barcode}"/>
+            <Label Content="Number of copies:"/>
+            <TextBox Margin="5" Text="{Binding NumberOfCopies}" PreviewTextInput="TextBox_PreviewTextInput"/>
+
+            <Button Content="Add Book" Width="100" Margin="10" Command="{Binding AddBookCommand}"/>
+        </StackPanel>
+
+
+        <!--<Button Grid.Row="0" Grid.Column="0" Margin="10" Content="Add Book" />
+        <Button Grid.Row="0" Grid.Column="1" Margin="10" Content="Remove Book" />
+        <Button Grid.Row="1" Grid.Column="0" Margin="10" Content="Search Book" />
+        <Button Grid.Row="1" Grid.Column="1" Margin="10" Content="Issue Book" />
+        <Button Grid.Row="2" Grid.Column="0" Margin="10" Content="Return Book" />
+        <Button Grid.Row="2" Grid.Column="1" Margin="10" Content="View All Books" />-->
+        
+    </Grid>
+</UserControl>

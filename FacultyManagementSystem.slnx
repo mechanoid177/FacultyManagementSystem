@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Notes.txt" />
+  </Folder>
   <Project Path="FacultyManagementSystem/FacultyManagementSystem.csproj" />
   <Project Path="FMS.Laboratory/FMS.Laboratory.csproj" />
   <Project Path="FMS.Library/FMS.Library.csproj" />

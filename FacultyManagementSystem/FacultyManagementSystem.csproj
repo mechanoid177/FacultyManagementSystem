@@ -10,11 +10,10 @@
 
   <ItemGroup>
     <Folder Include="Model\" />
-    <Folder Include="ViewModel\" />
-    <Folder Include="View\" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FMS.Library\FMS.Library.csproj" />
     <ProjectReference Include="..\FMSdataLayer\FMS.Faculty.csproj" />
   </ItemGroup>
 
