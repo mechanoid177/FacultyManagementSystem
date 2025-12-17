@@ -37,6 +37,14 @@
             <Button Content="Add Book" Width="100" Margin="10" Command="{Binding AddBookCommand}"/>
         </StackPanel>
 
+        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Center" Margin="0,20,0,0" >
+            <Label Content="Book barcode"/>
+            <TextBox Text="{Binding ScannedBookBarcode}" Margin="5"/>
+            <Label Content="Member barcode"/>
+            <TextBox Text="{Binding ScannedMemberBarcode}" Margin="5"/>
+            <Button Content="Issue Book" Width="100" Margin="10" Command="{Binding IssueBookCommand}"/>
+        </StackPanel>
+
 
         <!--<Button Grid.Row="0" Grid.Column="0" Margin="10" Content="Add Book" />
         <Button Grid.Row="0" Grid.Column="1" Margin="10" Content="Remove Book" />

@@ -50,7 +50,7 @@ namespace FMS.Library
         /// <param name="memberBarcode">The barcode of the member borrowing the book. Must correspond to a registered library member.</param>
         /// <returns>true if the book was successfully borrowed; otherwise, false. Returns false if the book does not exist, is
         /// unavailable, or the member is not found.</returns>
-        public bool BorrowBook(string bookBarcode, string memberBarcode)
+        public bool IssueBook(string bookBarcode, string memberBarcode)
         {
             var book = Books.SingleOrDefault(x => x.Barcode.Equals(bookBarcode));
 

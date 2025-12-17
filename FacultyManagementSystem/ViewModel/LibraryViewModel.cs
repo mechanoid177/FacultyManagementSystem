@@ -1,15 +1,23 @@
-﻿using FacultyManagementSystem.MVVM;
+﻿using CommunityToolkit.Mvvm.Input;
+using FacultyManagementSystem.MVVM;
 using FMS.Library;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
+using System.Windows.Input;
 
 namespace FacultyManagementSystem.ViewModel
 {
     public class LibraryViewModel : ViewModelBase
     {
         private Library _library;
+
+        public ICommand AddBookCommand;
+
+        public ICommand RemoveBookCommand;
+
+        public ICommand IssueBookCommand;
 
         private string _bookTitle;
         public string BookTitle
@@ -37,7 +45,7 @@ namespace FacultyManagementSystem.ViewModel
         public string ISBN
         {
             get { return _ISBN; }
-            set 
+            set
             {
                 _ISBN = value;
                 OnPropertyChanged(nameof(ISBN));
@@ -59,8 +67,8 @@ namespace FacultyManagementSystem.ViewModel
         public string Barcode
         {
             get { return _barcode; }
-            set 
-            { 
+            set
+            {
                 _barcode = value;
                 OnPropertyChanged(nameof(Barcode));
             }
@@ -77,15 +85,50 @@ namespace FacultyManagementSystem.ViewModel
             }
         }
 
+        private string _scannedBookBarcode;
+        public string ScannedBookBarcode
+        {
+            get { return _scannedBookBarcode; }
+            set
+            {
+                _scannedBookBarcode = value;
+                OnPropertyChanged(nameof(ScannedBookBarcode));
+            }
+        }
+
+        private string _scannedMemberBarcode;
+        public string ScannedMemberBarcode
+        {
+            get { return _scannedMemberBarcode; }
+            set
+            {
+                _scannedMemberBarcode = value;
+                OnPropertyChanged(nameof(ScannedMemberBarcode));
+            }
+        }
+
         public LibraryViewModel()
         {
             _library = new Library();
+
+            AddBookCommand = new RelayCommand(AddBook);
+            RemoveBookCommand = new RelayCommand(RemoveBook);
+            IssueBookCommand = new RelayCommand(IssueBook);
         }
 
-        public RelayCommand AddBookCommand => new RelayCommand((obj) =>
+        private void AddBook()
         {
-            _library.AddBook(_bookTitle, _author, _description, _ISBN, _barcode, _numberOfCopies);
-        });
+            _library.AddBook(BookTitle, Author, Description, ISBN, Barcode, NumberOfCopies);
+        }
 
+        private void RemoveBook()
+        {
+            _library.RemoveBook(_scannedBookBarcode);
+        }
+
+        private void IssueBook()
+        {
+            _library.IssueBook(_scannedBookBarcode, _scannedMemberBarcode);
+        }
     }
 }
