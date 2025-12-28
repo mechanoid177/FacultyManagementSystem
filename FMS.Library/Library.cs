@@ -1,6 +1,7 @@
 ﻿using FMS.Faculty;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace FMS.Library
@@ -23,7 +24,7 @@ namespace FMS.Library
         /// <summary>
         /// Gets or sets the collection of books associated with this instance.
         /// </summary>
-        public List<Book> Books { get; set; }
+        public ObservableCollection<Book> Books { get; set; }
 
         /// <summary>
         /// Gets or sets the collection of transactions associated with this instance.
@@ -36,7 +37,7 @@ namespace FMS.Library
         public Library()
         {
             Members = new List<Person>();
-            Books = new List<Book>();
+            Books = new ObservableCollection<Book>();
             Transactions = new List<Transaction>();
         }
 
@@ -118,20 +119,33 @@ namespace FMS.Library
         /// <param name="author">The author of the book. Cannot be null or empty.</param>
         /// <param name="description">A description of the book. Can be null or empty if no description is available.</param>
         /// <param name="ISBN">The International Standard Book Number (ISBN) of the book. Cannot be null or empty.</param>
-        /// <param name="Barcode">The barcode associated with the book. Cannot be null or empty.</param>
+        /// <param name="barcode">The barcode associated with the book. Cannot be null or empty.</param>
         /// <param name="numberOfCopies">The total number of copies of the book to add. Must be greater than or equal to 1.</param>
-        public void AddBook(string title, string author, string description, string ISBN, string Barcode, int numberOfCopies)
-        { 
+        public bool AddBook(string title, string author, string description, string ISBN, string barcode, int numberOfCopies)
+        {
+            if (numberOfCopies < 1 || title == null || ISBN == null || barcode == null) return false;
+
+            var existingBook = Books.SingleOrDefault(x => x.Barcode.Equals(barcode));
+
+            if (existingBook != null)
+            {
+                existingBook.NumberOfCopies += numberOfCopies;
+                existingBook.NumberOfAvailableCopies += numberOfCopies;
+                return true;
+            }
+
             Books.Add(new Book
             {
                 Title = title,
                 Author = author,
                 Description = description,
                 ISBN = ISBN,
-                Barcode = Barcode,
+                Barcode = barcode,
                 NumberOfCopies = numberOfCopies,
                 NumberOfAvailableCopies = numberOfCopies
             });
+
+            return true;
         }
 
         /// <summary>
@@ -150,6 +164,28 @@ namespace FMS.Library
 
             Books.Remove(book);
 
+            return true;
+        }
+
+        /// <summary>
+        /// Removes a single copy of the book identified by the specified barcode from the collection.
+        /// </summary>
+        /// <remarks>If the specified barcode does not match any book in the collection or if there are no
+        /// copies to remove, the method returns false and no changes are made.</remarks>
+        /// <param name="barcode">The barcode that uniquely identifies the book copy to remove. Cannot be null.</param>
+        /// <returns>true if a copy was successfully removed; otherwise, false.</returns>
+        public bool RemoveBookCopy(string barcode)
+        {
+            var book = Books.SingleOrDefault(x => x.Barcode.Equals(barcode));
+            if (book == null || book.NumberOfCopies == 0)
+            {
+                return false;
+            }
+            book.NumberOfCopies -= 1;
+            if (book.NumberOfAvailableCopies > 0)
+            {
+                book.NumberOfAvailableCopies -= 1;
+            }
             return true;
         }
 

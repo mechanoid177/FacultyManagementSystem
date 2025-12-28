@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:FacultyManagementSystem"
         xmlns:userControls="clr-namespace:FacultyManagementSystem.View.UserControls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Faculty Managment System" Height="450" Width="800" WindowState="Maximized" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />

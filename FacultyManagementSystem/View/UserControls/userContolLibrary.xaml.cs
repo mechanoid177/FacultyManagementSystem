@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FacultyManagementSystem.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -19,10 +20,15 @@ namespace FacultyManagementSystem.View.UserControls
     /// </summary>
     public partial class userContolLibrary : UserControl
     {
+        public LibraryViewModel LibraryViewModel { get; set; }
+
         public userContolLibrary()
         {
             InitializeComponent();
-            DataContext = new ViewModel.LibraryViewModel();
+            LibraryViewModel = new LibraryViewModel();
+            DataContext = LibraryViewModel;
+            this.listViewBooks.ItemsSource = LibraryViewModel.Books;
+            this.listViewSearchedBooks.ItemsSource = LibraryViewModel.SearchResults;
         }
 
         private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
