@@ -592,9 +592,10 @@ namespace FMS.Library
             return transactions;
         }
 
-        public List<Book> FindMatchingBooks(string searchString)
+        public List<Book>? FindMatchingBooks(string searchString)
         {
-            if (searchString.Count() == 0) return null;
+            List<Book> books = new List<Book>();
+            if (searchString.Count() == 0 || searchString == null) return books;
 
             string[] keywords = searchString.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -615,8 +616,6 @@ namespace FMS.Library
             }
 
             sqlQuery += ";";
-
-            List<Book> books = new List<Book>();
 
             try
             {
