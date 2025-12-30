@@ -25,16 +25,24 @@ namespace FacultyManagementSystem.View.UserControls
         public userContolLibrary()
         {
             InitializeComponent();
+
             LibraryViewModel = new LibraryViewModel();
             DataContext = LibraryViewModel;
-            this.listViewBooks.ItemsSource = LibraryViewModel.Books;
+
             this.listViewSearchedBooks.ItemsSource = LibraryViewModel.SearchResults;
+
+            LibraryViewModel.MessageReceived += OnMessageReceived;
         }
 
         private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             var textBox = sender as TextBox;
             e.Handled = Regex.IsMatch(e.Text, "[^0-9]+");
+        }
+
+        private void OnMessageReceived(object sender, FMS.Library.MessengerEventArgs e)
+        {
+            MessageBox.Show(e.Message, "Library Message", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

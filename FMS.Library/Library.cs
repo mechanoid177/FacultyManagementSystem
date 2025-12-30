@@ -16,10 +16,12 @@ namespace FMS.Library
     /// thread-safe; concurrent access should be synchronized externally if used in multi-threaded scenarios.</remarks>
     public class Library
     {
+        private Database _database;
+
         /// <summary>
         /// Gets or sets the collection of people who are members of the group.
         /// </summary>
-        public List<Person> Members { get; set; }
+        public ObservableCollection<Person> Members { get; set; }
 
         /// <summary>
         /// Gets or sets the collection of books associated with this instance.
@@ -29,16 +31,19 @@ namespace FMS.Library
         /// <summary>
         /// Gets or sets the collection of transactions associated with this instance.
         /// </summary>
-        public List<Transaction> Transactions { get; set; }
+        public ObservableCollection<Transaction> Transactions { get; set; }
+
+        public event EventHandler<MessengerEventArgs> ActionFailed;
 
         /// <summary>
         /// Initializes a new instance of the Library class with empty collections of members, books, and transactions.
         /// </summary>
         public Library()
         {
-            Members = new List<Person>();
-            Books = new ObservableCollection<Book>();
-            Transactions = new List<Transaction>();
+            _database = new Database();
+            Members = new ObservableCollection<Person>(_database.GetAllMembers().ToList());
+            Books = new ObservableCollection<Book>(_database.GetAllBooks().ToList());
+            Transactions = new ObservableCollection<Transaction>(_database.GetAllTransactions().ToList());
         }
 
         /// <summary>
@@ -53,27 +58,32 @@ namespace FMS.Library
         /// unavailable, or the member is not found.</returns>
         public bool IssueBook(string bookBarcode, string memberBarcode)
         {
-            var book = Books.SingleOrDefault(x => x.Barcode.Equals(bookBarcode));
+            var book = _database.FindBookByBarcode(bookBarcode);
 
             if (book == null)
             {
+                OnActionFailed("Book not found.");
                 return false;
             }
 
             if (book.NumberOfAvailableCopies == 0)
             {
+                OnActionFailed("No available copies of the book.");
                 return false;
             }
 
-            var member = Members.SingleOrDefault(x => x.Barcode.Equals(memberBarcode));
+            var member = _database.FindMemberByBarcode(memberBarcode);
 
             if (member == null)
             {
+                OnActionFailed("Member not found.");
                 return false;
             }
 
             book.NumberOfAvailableCopies -= 1;
-            Transactions.Add(new Transaction(book.Barcode, memberBarcode, DateTime.Now, DateTime.Now.AddDays(14)));
+            Transaction transaction = new Transaction(Guid.NewGuid(), book.Barcode, memberBarcode, DateTime.Now, DateTime.Now.AddDays(14));
+            _database.InsertNewTransaction(transaction);
+            _database.UpdateBook(book);
 
             return true;
         }
@@ -88,26 +98,32 @@ namespace FMS.Library
         /// <returns>true if the book return is successfully processed; otherwise, false.</returns>
         public bool ReturnBook(string bookBarcode, string memberBarcode)
         {
-            var book = Books.SingleOrDefault(x => x.Barcode.Equals(bookBarcode));
+            var book = _database.FindBookByBarcode(bookBarcode);  
+
             if (book == null)
             {
+                OnActionFailed("Book not found.");
                 return false;
             }
-            var member = Members.SingleOrDefault(x => x.Barcode.Equals(memberBarcode));
+            var member = _database.FindMemberByBarcode(memberBarcode);
             if (member == null)
             {
+                OnActionFailed("Member not found.");
                 return false;
             }
 
-            var transaction = Transactions.SingleOrDefault(x => x.BookBarcode.Equals(bookBarcode) && x.MemberBarcode.Equals(memberBarcode) && x.ReturnDate == null);
+            var transaction = _database.FindTransaction(bookBarcode, memberBarcode);
 
             if (transaction == null)
             {
+                OnActionFailed("Was not issued.");
                 return false;
             }
 
             transaction.ReturnDate = DateTime.Now;
             book.NumberOfAvailableCopies += 1;
+            _database.UpdateTransaction(transaction);
+            _database.UpdateBook(book);
 
             return true;
         }
@@ -123,18 +139,23 @@ namespace FMS.Library
         /// <param name="numberOfCopies">The total number of copies of the book to add. Must be greater than or equal to 1.</param>
         public bool AddBook(string title, string author, string description, string ISBN, string barcode, int numberOfCopies)
         {
-            if (numberOfCopies < 1 || title == null || ISBN == null || barcode == null) return false;
+            if (numberOfCopies < 1 || barcode == null)
+            {
+                OnActionFailed("Invalid book details provided.");
+                return false;
+            }
 
-            var existingBook = Books.SingleOrDefault(x => x.Barcode.Equals(barcode));
+            var existingBook = _database.FindBookByBarcode(barcode);
 
             if (existingBook != null)
             {
                 existingBook.NumberOfCopies += numberOfCopies;
                 existingBook.NumberOfAvailableCopies += numberOfCopies;
+                _database.UpdateBook(existingBook);
                 return true;
             }
 
-            Books.Add(new Book
+            var book = new Book
             {
                 Title = title,
                 Author = author,
@@ -143,7 +164,9 @@ namespace FMS.Library
                 Barcode = barcode,
                 NumberOfCopies = numberOfCopies,
                 NumberOfAvailableCopies = numberOfCopies
-            });
+            };
+
+            _database.InsertNewBook(book); 
 
             return true;
         }
@@ -151,18 +174,19 @@ namespace FMS.Library
         /// <summary>
         /// Removes the book with the specified barcode from the collection.
         /// </summary>
-        /// <param name="Barcode">The barcode of the book to remove. Cannot be null.</param>
+        /// <param name="barcode">The barcode of the book to remove. Cannot be null.</param>
         /// <returns>true if a book with the specified barcode was found and removed; otherwise, false.</returns>
-        public bool RemoveBook(string Barcode) 
+        public bool RemoveBook(string barcode) 
         {
-            var book = Books.SingleOrDefault(x => x.Barcode.Equals(Barcode));
+            var book = _database.FindBookByBarcode(barcode);
 
             if (book == null)
             {
+                OnActionFailed("Book not found.");
                 return false;
             }
 
-            Books.Remove(book);
+            _database.DeleteBook(book);
 
             return true;
         }
@@ -176,15 +200,19 @@ namespace FMS.Library
         /// <returns>true if a copy was successfully removed; otherwise, false.</returns>
         public bool RemoveBookCopy(string barcode)
         {
-            var book = Books.SingleOrDefault(x => x.Barcode.Equals(barcode));
+            var book = _database.FindBookByBarcode(barcode);
             if (book == null || book.NumberOfCopies == 0)
             {
+                OnActionFailed("Book not found or no copies to remove.");
                 return false;
             }
+
             book.NumberOfCopies -= 1;
+
             if (book.NumberOfAvailableCopies > 0)
             {
                 book.NumberOfAvailableCopies -= 1;
+                _database.UpdateBook(book);
             }
             return true;
         }
@@ -194,21 +222,20 @@ namespace FMS.Library
         /// </summary>
         /// <remarks>All criteria are combined using logical AND. Only books that match every specified
         /// (non-null or non-empty) parameter are included in the result.</remarks>
-        /// <param name="name">The title or partial title of the book to search for. If null or empty, this criterion is ignored.</param>
+        /// <param name="title">The title or partial title of the book to search for. If null or empty, this criterion is ignored.</param>
         /// <param name="author">The author or partial author name to search for. If null or empty, this criterion is ignored.</param>
         /// <param name="isbn">The ISBN or partial ISBN to search for. If null or empty, this criterion is ignored.</param>
         /// <param name="barcode">The barcode or partial barcode to search for. If null or empty, this criterion is ignored.</param>
         /// <param name="numberOfAvaiableCopies">The exact number of available copies to match. If null, this criterion is ignored.</param>
         /// <returns>A list of books that match all specified search criteria. The list is empty if no books are found.</returns>
-        public List<Book> SearchBooks(string name, string author, string isbn, string barcode, int? numberOfAvaiableCopies)
+        public List<Book> SearchBooks(string searchString)
         {
-            return Books.Where(Books => 
-                (string.IsNullOrEmpty(name) || Books.Title.Contains(name)) &&
-                (string.IsNullOrEmpty(author) || Books.Author.Contains(author)) &&
-                (string.IsNullOrEmpty(isbn) || Books.ISBN.Contains(isbn)) &&
-                (string.IsNullOrEmpty(barcode) || Books.Barcode.Contains(barcode)) &&
-                (!numberOfAvaiableCopies.HasValue || Books.NumberOfAvailableCopies == numberOfAvaiableCopies.Value)
-            ).ToList();
+            return _database.FindMatchingBooks(searchString);
+        }
+
+        protected void OnActionFailed(string message)
+        {
+            ActionFailed?.Invoke(this, new MessengerEventArgs(message));
         }
     }
 }

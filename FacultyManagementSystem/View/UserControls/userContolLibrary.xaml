@@ -50,30 +50,22 @@
                 <TextBlock Text="Member barcode"/>
                 <TextBox Text="{Binding ScannedMemberBarcode}" Margin="5"/>
                 <Button Content="Issue Book" Width="100" Margin="10" Command="{Binding IssueBookCommand}"/>
+                <Button Content="Return Book" Width="100" Margin="10" Command="{Binding ReturnBookCommand}"/>
                 <Button Content="Remove Book" Width="100" Margin="10" Command="{Binding RemoveBookCommand}"/>
             </StackPanel>
 
             <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Right" Margin="100,0,0,0">
                 <TextBlock Text="Search Books" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5"/>
-                <TextBlock Text="Keyword"/>
-                <TextBox Margin="5" Text="{Binding SearchKeyword}"/>
-                <TextBlock Text="OR title"/>
-                <TextBox Margin="5" Text="{Binding SearchTitle}"/>
-                <TextBlock Text="OR author"/>
-                <TextBox Margin="5" Text="{Binding SearchAuthor}"/>
-                <TextBlock Text="OR ISBN"/>
-                <TextBox Margin="5" Text="{Binding SearchISBN}"/>
-                <TextBlock Text="OR Barcode"/>
-                <TextBox Margin="5" Text="{Binding SearchBarcode}"/>
-                <TextBlock Text="OR number of available copies"/>
-                <TextBox Margin="5" Text="{Binding SearchNumberOfCopies}"/>
+
+                <TextBox Margin="5" Width="200" Text="{Binding SearchKeywords}"/>
+                
                 <Button Content="Search" Width="100" Margin="10" Command="{Binding SearchBookCommand}"/>
             </StackPanel>
         </Grid>
 
         <StackPanel Grid.Row="2" Grid.ColumnSpan="2">
             <TextBlock Text="Search results:" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5"/>
-            <ListView Name="listViewSearchedBooks" Grid.RowSpan="2" Margin="10" Height="290">
+            <ListView Name="listViewSearchedBooks" Grid.RowSpan="2" Margin="10" Height="400">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}" Width="150"/>
@@ -87,24 +79,8 @@
             </ListView>
         </StackPanel>
 
-        <StackPanel Grid.Row="3" Grid.ColumnSpan="2">
-            <TextBlock Text="All books:" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5"/>
-            <ListView Name="listViewBooks" Grid.RowSpan="2" Margin="10" Height="290">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}" Width="150"/>
-                        <GridViewColumn Header="Author" DisplayMemberBinding="{Binding Author}" Width="100"/>
-                        <GridViewColumn Header="ISBN" DisplayMemberBinding="{Binding ISBN}" Width="100"/>
-                        <GridViewColumn Header="Barcode" DisplayMemberBinding="{Binding Barcode}" Width="100"/>
-                        <GridViewColumn Header="Copies" DisplayMemberBinding="{Binding NumberOfCopies}" Width="120"/>
-                        <GridViewColumn Header="Available Copies" DisplayMemberBinding="{Binding NumberOfAvailableCopies}" Width="120"/>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-        </StackPanel>
 
-        
 
-        
+
     </Grid>
 </UserControl>

@@ -34,35 +34,19 @@ namespace FacultyManagementSystem.ViewModel
         private string _scannedMemberBarcode;
 
         [ObservableProperty]
-        private string _searchKeyword;
-
-        [ObservableProperty]
-        private string _searchTitle;
-
-        [ObservableProperty]
-        private string _searchAuthor;
-
-        [ObservableProperty]
-        private string _searchISBN;
-
-        [ObservableProperty]
-        private string _searchBarcode;
-
-        [ObservableProperty]
-        private int _searchNumberOfCopies;
+        private string _searchKeywords;
 
         public ObservableCollection<Book> SearchResults;
 
-        public ObservableCollection<Book> Books;
+        public event EventHandler<MessengerEventArgs> MessageReceived;
 
         public LibraryViewModel()
         {
             _library = new Library();
 
-            SearchResults = new ObservableCollection<Book>();
+            _library.ActionFailed += (s, e) => OnMessageReceived(e.Message);
 
-            Books = new ObservableCollection<Book>(_library.Books.ToList());
-            _library.Books.CollectionChanged += (s, e) => CopyListBooks();
+            SearchResults = new ObservableCollection<Book>();
         }
 
         [RelayCommand]
@@ -87,20 +71,25 @@ namespace FacultyManagementSystem.ViewModel
         private void SearchBook()
         {
             SearchResults.Clear();
-            var result = _library.SearchBooks(_searchTitle, _searchAuthor, _searchISBN, _searchBarcode, _searchNumberOfCopies);
+            var result = _library.SearchBooks(_searchKeywords);
+
+            if (result == null) return;
+
             foreach (var book in result)
             {
                 SearchResults.Add(book);
             }
         }
 
-        private void CopyListBooks()
+        [RelayCommand]
+        private void ReturnBook()
         {
-            Books.Clear();
-            foreach (var book in _library.Books)
-            {
-                Books.Add(book);
-            }
+            _library.ReturnBook(_scannedBookBarcode, _scannedMemberBarcode);
+        }
+
+        protected void OnMessageReceived(string message)
+        {
+            MessageReceived?.Invoke(this, new MessengerEventArgs(message));
         }
     }
 }

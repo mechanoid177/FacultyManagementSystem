@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FMS.Faculty
 {
-    internal class Student : Person
+    public class Student : Person
     {
         public List<Subject> AppointedSubjects {  get; set; }
         public List<Subject> PassedExams { get; set; }
