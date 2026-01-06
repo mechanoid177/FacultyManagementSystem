@@ -2,9 +2,7 @@
   <Folder Name="/Solution Items/">
     <File Path="Notes.txt" />
   </Folder>
+  <Folder Name="/Source/" />
+  <Project Path="FacultyManagementSystem.UI/FacultyManagementSystem.UI.csproj" />
   <Project Path="FacultyManagementSystem/FacultyManagementSystem.csproj" />
-  <Project Path="FMS.Laboratory/FMS.Laboratory.csproj" />
-  <Project Path="FMS.Library/FMS.Library.csproj" />
-  <Project Path="FMS.Workshop/FMS.Workshop.csproj" />
-  <Project Path="FMSdataLayer/FMS.Faculty.csproj" />
 </Solution>

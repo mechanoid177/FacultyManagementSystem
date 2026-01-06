@@ -1,0 +1,26 @@
+﻿<Window x:Class="FacultyManagementSystem.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FacultyManagementSystem"
+        xmlns:userControls="clr-namespace:FacultyManagementSystem.View.UserControls"
+        mc:Ignorable="d"
+        Title="Faculty Managment System" Height="1080" Width="1920" WindowState="Maximized" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="4*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" Background="LightGray">
+            <Button Content="Faculty" Margin="10" />
+            <Button Content="Library" Margin="10" />
+            <Button Content="Students" Margin="10" />
+            <Button Content="Settings" Margin="10" />
+        </StackPanel>
+
+
+        <userControls:userContolLibrary x:Name="ucLibrary" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1"/>
+    </Grid>
+</Window>
