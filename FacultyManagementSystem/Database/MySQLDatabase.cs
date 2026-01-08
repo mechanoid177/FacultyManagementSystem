@@ -1,6 +1,7 @@
 ﻿using FacultyManagementSystem.Database.Interfaces;
 using FacultyManagementSystem.Faculty;
 using FacultyManagementSystem.Library;
+using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -11,35 +12,40 @@ using System.Xml.Linq;
 
 namespace FacultyManagementSystem.Database
 {
-    public class MySQLDatabase : IMySQLDatabase
+    public class MySqlDatabase : IMySqlDatabase
     {
-        private string _connectionString = "Server=localhost;Port=3306;Database=LibraryDatabase;User=root;Password=password;"; // Get from configuration
         private MySqlConnection _connection;
+        private IConfiguration _configuration;
 
-        public MySQLDatabase()
+        public MySqlDatabase(IConfiguration configuration)
         {
-            _connection = new MySqlConnection(_connectionString);
+            _configuration = configuration;
+            _connection = new MySqlConnection(_configuration.GetSection("DatabaseInfo")["ConnectionString"]);
         }
 
-        public void InsertNewMember(Person member)
+
+        #region Student methods
+
+        public void CreateNewStudent(Student student)
         {
             try
             {
-                string insertSql = "INSERT INTO Members " +
-                    "(Name, Surname, ParentName, JMBG, Phone, Address, Email, Barcode) " +
+                string insertSql = "INSERT INTO Students " +
+                    "(Name, Surname, ParentName, JMBG, Phone, Address, Email, Barcode, Type) " +
                     "VALUES (@Name, @Surname, @ParentName, @JMBG, @Phone, @Address, @Email, @Barcode)";
+
 
                 MySqlCommand insertCommand = new MySqlCommand(insertSql, _connection);
 
                 // Parameters
-                insertCommand.Parameters.AddWithValue("@Name", "John Doe");
-                insertCommand.Parameters.AddWithValue("@Surname", "John Doe");
-                insertCommand.Parameters.AddWithValue("@ParentName", "John Doe");
-                insertCommand.Parameters.AddWithValue("@JMBG", "John Doe");
-                insertCommand.Parameters.AddWithValue("@Phone", "John Doe");
-                insertCommand.Parameters.AddWithValue("@Address", "John Doe");
-                insertCommand.Parameters.AddWithValue("@Email", "John Doe");
-                insertCommand.Parameters.AddWithValue("@Barcode", "John Doe");
+                insertCommand.Parameters.AddWithValue("@Name", student.Name);
+                insertCommand.Parameters.AddWithValue("@Surname", student.Surname);
+                insertCommand.Parameters.AddWithValue("@ParentName", student.ParentName);
+                insertCommand.Parameters.AddWithValue("@JMBG", student.JMBG);
+                insertCommand.Parameters.AddWithValue("@Phone", student.Phone);
+                insertCommand.Parameters.AddWithValue("@Address", student.Address);
+                insertCommand.Parameters.AddWithValue("@Email", student.Email);
+                insertCommand.Parameters.AddWithValue("@Barcode", student.Barcode);
 
                 _connection.Open();
                 int rowsAffected = insertCommand.ExecuteNonQuery();
@@ -55,11 +61,54 @@ namespace FacultyManagementSystem.Database
             }
         }
 
-        public void UpdateMember(Person member)
+        public Student FindStudentByBarcode(string barcode)
+        {
+            Student student = null;
+            try
+            {
+                string selectSql = "SELECT * FROM Students WHERE Barcode = @Barcode";
+
+                MySqlCommand selectCommand = new MySqlCommand(selectSql, _connection);
+
+                selectCommand.Parameters.AddWithValue("@Barcode", barcode);
+
+                _connection.Open();
+                MySqlDataReader reader = selectCommand.ExecuteReader();
+                if (reader.Read())
+                {
+                    student = new Student
+                    {
+                        Name = reader.GetString("Name"),
+                        Surname = reader.GetString("Surname"),
+                        ParentName = reader.GetString("ParentName"),
+                        JMBG = reader.GetString("JMBG"),
+                        Phone = reader.GetString("Phone"),
+                        Address = reader.GetString("Address"),
+                        Email = reader.GetString("Email"),
+                        Barcode = reader.GetString("Barcode")
+                    };
+                }
+                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                // Handle exception (e.g., log it)
+                //Console.WriteLine("An error occurred: " + ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+
+            return student;
+        }
+
+        public void UpdateStudent(Student student)
         {
             try
             {
-                string updateSql = "UPDATE Members SET " +
+
+                string updateSql = "UPDATE Students SET " +
                     "Name = @Name, " +
                     "Surname = @Surname, " +
                     "ParentName = @ParentName, " +
@@ -67,20 +116,19 @@ namespace FacultyManagementSystem.Database
                     "Phone = @Phone, " +
                     "Address = @Address, " +
                     "Email = @Email, " +
-                    "Barcode = @Barcode " +
-                    "WHERE Id = @Id";
+                    "WHERE Barcode = @Barcode";
+
                 MySqlCommand updateCommand = new MySqlCommand(updateSql, _connection);
 
                 // Parameters
-                updateCommand.Parameters.AddWithValue("@Name", member.Name);
-                updateCommand.Parameters.AddWithValue("@Surname", member.Surname);
-                updateCommand.Parameters.AddWithValue("@ParentName", member.ParentName);
-                updateCommand.Parameters.AddWithValue("@JMBG", member.JMBG);
-                updateCommand.Parameters.AddWithValue("@Phone", member.Phone);
-                updateCommand.Parameters.AddWithValue("@Address", member.Address);
-                updateCommand.Parameters.AddWithValue("@Email", member.Email);
-                updateCommand.Parameters.AddWithValue("@Barcode", member.Barcode);
-                updateCommand.Parameters.AddWithValue("@Id", member.Id);
+                updateCommand.Parameters.AddWithValue("@Name", student.Name);
+                updateCommand.Parameters.AddWithValue("@Surname", student.Surname);
+                updateCommand.Parameters.AddWithValue("@ParentName", student.ParentName);
+                updateCommand.Parameters.AddWithValue("@JMBG", student.JMBG);
+                updateCommand.Parameters.AddWithValue("@Phone", student.Phone);
+                updateCommand.Parameters.AddWithValue("@Address", student.Address);
+                updateCommand.Parameters.AddWithValue("@Email", student.Email);
+                updateCommand.Parameters.AddWithValue("@Barcode", student.Barcode);
 
                 _connection.Open();
                 int rowsAffected = updateCommand.ExecuteNonQuery();
@@ -96,15 +144,16 @@ namespace FacultyManagementSystem.Database
             }
         }
 
-        public void DeleteMember(Person member)
+        public void DeleteStudent(Student student)
         {
             try
             {
-                string deleteSql = "DELETE FROM Members WHERE Id = @Id";
+
+                string deleteSql = "DELETE FROM Students WHERE Barcode = @Barcode";
 
                 MySqlCommand deleteCommand = new MySqlCommand(deleteSql, _connection);
 
-                deleteCommand.Parameters.AddWithValue("@Id", member.Id);
+                deleteCommand.Parameters.AddWithValue("@Barcode", student.Barcode);
 
                 _connection.Open();
                 int rowsAffected = deleteCommand.ExecuteNonQuery();
@@ -120,7 +169,157 @@ namespace FacultyManagementSystem.Database
             }
         }
 
-        public void InsertNewBook(Book book)
+        #endregion
+
+        #region Employee methods
+
+        public void CreateNewEmployee(Employee employee)
+        {
+            try
+            {
+                string insertSql = "INSERT INTO Employees " +
+                    "(Name, Surname, ParentName, JMBG, Phone, Address, Email, Barcode) " +
+                    "VALUES (@Name, @Surname, @ParentName, @JMBG, @Phone, @Address, @Email, @Barcode)";
+
+
+                MySqlCommand insertCommand = new MySqlCommand(insertSql, _connection);
+
+                // Parameters
+                insertCommand.Parameters.AddWithValue("@Name", employee.Name);
+                insertCommand.Parameters.AddWithValue("@Surname", employee.Surname);
+                insertCommand.Parameters.AddWithValue("@ParentName", employee.ParentName);
+                insertCommand.Parameters.AddWithValue("@JMBG", employee.JMBG);
+                insertCommand.Parameters.AddWithValue("@Phone", employee.Phone);
+                insertCommand.Parameters.AddWithValue("@Address", employee.Address);
+                insertCommand.Parameters.AddWithValue("@Email", employee.Email);
+                insertCommand.Parameters.AddWithValue("@Barcode", employee.Barcode);
+
+                _connection.Open();
+                int rowsAffected = insertCommand.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                // Handle exception (e.g., log it)
+                //Console.WriteLine("An error occurred: " + ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
+        public Employee FindEmployeeByBarcode(string barcode)
+        {
+            Employee employee = null;
+            try
+            {
+                string selectSql = "SELECT * FROM Employees WHERE Barcode = @Barcode";
+
+                MySqlCommand selectCommand = new MySqlCommand(selectSql, _connection);
+
+                selectCommand.Parameters.AddWithValue("@Barcode", barcode);
+
+                _connection.Open();
+                MySqlDataReader reader = selectCommand.ExecuteReader();
+                if (reader.Read())
+                {
+                    employee = new Employee
+                    {
+                        Name = reader.GetString("Name"),
+                        Surname = reader.GetString("Surname"),
+                        ParentName = reader.GetString("ParentName"),
+                        JMBG = reader.GetString("JMBG"),
+                        Phone = reader.GetString("Phone"),
+                        Address = reader.GetString("Address"),
+                        Email = reader.GetString("Email"),
+                        Barcode = reader.GetString("Barcode")
+                    };
+                }
+                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                // Handle exception (e.g., log it)
+                //Console.WriteLine("An error occurred: " + ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+
+            return employee;
+        }
+
+        public void UpdateEmployee(Employee employee)
+        {
+            try
+            {
+                string updateSql = "UPDATE Employees SET " +
+                    "Name = @Name, " +
+                    "Surname = @Surname, " +
+                    "ParentName = @ParentName, " +
+                    "JMBG = @JMBG, " +
+                    "Phone = @Phone, " +
+                    "Address = @Address, " +
+                    "Email = @Email, " +
+                    "WHERE Barcode = @Barcode";
+
+                MySqlCommand updateCommand = new MySqlCommand(updateSql, _connection);
+
+                // Parameters
+                updateCommand.Parameters.AddWithValue("@Name", employee.Name);
+                updateCommand.Parameters.AddWithValue("@Surname", employee.Surname);
+                updateCommand.Parameters.AddWithValue("@ParentName", employee.ParentName);
+                updateCommand.Parameters.AddWithValue("@JMBG", employee.JMBG);
+                updateCommand.Parameters.AddWithValue("@Phone", employee.Phone);
+                updateCommand.Parameters.AddWithValue("@Address", employee.Address);
+                updateCommand.Parameters.AddWithValue("@Email", employee.Email);
+                updateCommand.Parameters.AddWithValue("@Barcode", employee.Barcode);
+
+                _connection.Open();
+                int rowsAffected = updateCommand.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                // Handle exception (e.g., log it)
+                //Console.WriteLine("An error occurred: " + ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
+        public void DeleteEmployee(Employee employee)
+        {
+            try
+            {
+
+                string deleteSql = "DELETE FROM Employees WHERE Barcode = @Barcode";
+
+                MySqlCommand deleteCommand = new MySqlCommand(deleteSql, _connection);
+
+                deleteCommand.Parameters.AddWithValue("@Barcode", employee.Barcode);
+
+                _connection.Open();
+                int rowsAffected = deleteCommand.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                // Handle exception (e.g., log it)
+                //Console.WriteLine("An error occurred: " + ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
+        #endregion
+
+        #region Book methods
+
+        public void CreateNewBook(Book book)
         {
             try
             {
@@ -213,7 +412,117 @@ namespace FacultyManagementSystem.Database
             }
         }
 
-        public void InsertNewTransaction(Transaction transaction)
+        public List<Book>? FindMatchingBooks(string searchString)
+        {
+            List<Book> books = new List<Book>();
+            if (searchString.Count() == 0 || searchString == null) return books;
+
+            string[] keywords = searchString.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            string sqlQuery = "SELECT * FROM Books " +
+                "WHERE " +
+                "Title LIKE CONCAT('%', @Keyword0, '%') OR " +
+                "Author LIKE CONCAT('%', @Keyword0, '%') OR " +
+                "ISBN LIKE CONCAT('%', @Keyword0, '%') OR " +
+                "Barcode LIKE CONCAT('%', @Keyword0, '%')";
+
+            for (int i = 1; i < keywords.Length; i++)
+            {
+                sqlQuery += " OR " +
+                "Title LIKE CONCAT('%', " + keywords[i] + ", '%') OR " +
+                "Author LIKE CONCAT('%', " + keywords[i] + ", '%') OR " +
+                "ISBN LIKE CONCAT('%', " + keywords[i] + ", '%') OR " +
+                "Barcode LIKE CONCAT('%', " + keywords[i] + ", '%')";
+            }
+
+            sqlQuery += ";";
+
+            try
+            {
+                MySqlCommand command = new MySqlCommand(sqlQuery, _connection);
+
+                for (int i = 0; i < keywords.Length; i++)
+                {
+                    command.Parameters.AddWithValue("@Keyword" + i, keywords[i]);
+                }
+
+                _connection.Open();
+                MySqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    Book book = new Book
+                    {
+                        Title = reader.GetString("Title"),
+                        Description = reader.GetString("Description"),
+                        Author = reader.GetString("Author"),
+                        ISBN = reader.GetString("ISBN"),
+                        NumberOfCopies = reader.GetInt32("NumberOfCopies"),
+                        NumberOfAvailableCopies = reader.GetInt32("NumberOfAvailableCopies"),
+                        Barcode = reader.GetString("Barcode")
+                    };
+                    books.Add(book);
+                }
+                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("An error occurred: " + ex.Message);
+                // Handle exception (e.g., log it)
+                //Console.WriteLine("An error occurred: " + ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+
+            return books;
+        }
+
+        public Book FindBookByBarcode(string barcode)
+        {
+            Book book = null;
+            try
+            {
+                string selectSql = "SELECT * FROM Books WHERE Barcode = @Barcode";
+
+                MySqlCommand selectCommand = new MySqlCommand(selectSql, _connection);
+
+                selectCommand.Parameters.AddWithValue("@Barcode", barcode);
+
+                _connection.Open();
+                MySqlDataReader reader = selectCommand.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    book = new Book
+                    {
+                        Title = reader.GetString("Title"),
+                        Description = reader.GetString("Description"),
+                        Author = reader.GetString("Author"),
+                        ISBN = reader.GetString("ISBN"),
+                        NumberOfCopies = reader.GetInt32("NumberOfCopies"),
+                        NumberOfAvailableCopies = reader.GetInt32("NumberOfAvailableCopies"),
+                        Barcode = reader.GetString("Barcode")
+                    };
+                }
+                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                // Handle exception (e.g., log it)
+                //Console.WriteLine("An error occurred: " + ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+            return book;
+        }
+
+        #endregion
+
+        #region Transaction methods
+        public void CreateNewTransaction(Transaction transaction)
         {
             try
             {
@@ -281,123 +590,6 @@ namespace FacultyManagementSystem.Database
             }
         }
 
-        public Book FindBookByBarcode(string barcode)
-        {
-            Book book = null;
-            try
-            {
-                string selectSql = "SELECT * FROM Books WHERE Barcode = @Barcode";
-
-                MySqlCommand selectCommand = new MySqlCommand(selectSql, _connection);
-
-                selectCommand.Parameters.AddWithValue("@Barcode", barcode);
-
-                _connection.Open();
-                MySqlDataReader reader = selectCommand.ExecuteReader();
-
-                if (reader.Read())
-                {
-                    book = new Book
-                    {
-                        Title = reader.GetString("Title"),
-                        Description = reader.GetString("Description"),
-                        Author = reader.GetString("Author"),
-                        ISBN = reader.GetString("ISBN"),
-                        NumberOfCopies = reader.GetInt32("NumberOfCopies"),
-                        NumberOfAvailableCopies = reader.GetInt32("NumberOfAvailableCopies"),
-                        Barcode = reader.GetString("Barcode")
-                    };
-                }
-                reader.Close();
-            }
-            catch (Exception ex)
-            {
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
-            }
-            finally
-            {
-                _connection.Close();
-            }
-            return book;
-        }
-
-        public Person FindMemberByBarcode(string barcode)
-        {
-            Person member = null;
-            try
-            {
-                string sqlQuery = "SELECT * FROM Members WHERE Barcode = @Barcode";
-
-                MySqlCommand command = new MySqlCommand(sqlQuery, _connection);
-
-                command.Parameters.AddWithValue("@Barcode", barcode);
-
-                _connection.Open();
-                MySqlDataReader reader = command.ExecuteReader();
-
-                if (reader.Read())
-                {
-                    string Name = reader.GetString("Name");
-                    string Surname = reader.GetString("Surname");
-                    string ParentName = reader.GetString("ParentName");
-                    string JMBG = reader.GetString("JMBG");
-                    string Phone = reader.GetString("Phone");
-                    string Address = reader.GetString("Address");
-                    string Email = reader.GetString("Email");
-                    string Barcode = reader.GetString("Barcode");
-                    PersonType type;
-                    _ = Enum.TryParse(reader.GetString("Type"), out type); // DO a check
-                    switch (type)
-                    {
-                        case PersonType.Student:
-                            member = new Student
-                            {
-                                Name = Name,
-                                Surname = Surname,
-                                ParentName = ParentName,
-                                JMBG = JMBG,
-                                Phone = Phone,
-                                Address = Address,
-                                Email = Email,
-                                Barcode = Barcode,
-                                Type = PersonType.Student
-                            };
-                            break;
-                        case PersonType.Employee:
-                            member = new Employee
-                            {
-                                Name = Name,
-                                Surname = Surname,
-                                ParentName = ParentName,
-                                JMBG = JMBG,
-                                Phone = Phone,
-                                Address = Address,
-                                Email = Email,
-                                Barcode = Barcode,
-                                Type = PersonType.Employee
-                            };
-                            break;
-                        default:
-                            // Handle unknown type
-                            break;
-                    }
-                }
-                reader.Close();
-            }
-            catch (Exception ex)
-            {
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
-            }
-            finally
-            {
-                _connection.Close();
-            }
-
-            return member;
-        }
-
         public Transaction FindTransaction(string bookBarcode, string memberBarcode)
         {
             Transaction transaction = null;
@@ -440,225 +632,7 @@ namespace FacultyManagementSystem.Database
             return transaction;
         }
 
-        public List<Book> GetAllBooks()
-        {
-            List<Book> books = new List<Book>();
-            try
-            {
-                string selectSql = "SELECT * FROM Books";
-                MySqlCommand selectCommand = new MySqlCommand(selectSql, _connection);
-
-                _connection.Open();
-                MySqlDataReader reader = selectCommand.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    Book book = new Book
-                    {
-                        Title = reader.GetString("Title"),
-                        Description = reader.GetString("Description"),
-                        Author = reader.GetString("Author"),
-                        ISBN = reader.GetString("ISBN"),
-                        NumberOfCopies = reader.GetInt32("NumberOfCopies"),
-                        NumberOfAvailableCopies = reader.GetInt32("NumberOfAvailableCopies"),
-                        Barcode = reader.GetString("Barcode")
-                    };
-                    books.Add(book);
-                }
-                reader.Close();
-            }
-            catch (Exception ex)
-            {
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
-            }
-            finally
-            {
-                _connection.Close();
-            }
-            return books;
-        }
-
-        public List<Person> GetAllMembers()
-        {
-            List<Person> members = new List<Person>();
-            try
-            {
-                string selectSql = "SELECT * FROM Members";
-                MySqlCommand selectCommand = new MySqlCommand(selectSql, _connection);
-                _connection.Open();
-                MySqlDataReader reader = selectCommand.ExecuteReader();
-                while (reader.Read())
-                {
-                    string Name = reader.GetString("Name");
-                    string Surname = reader.GetString("Surname");
-                    string ParentName = reader.GetString("ParentName");
-                    string JMBG = reader.GetString("JMBG");
-                    string Phone = reader.GetString("Phone");
-                    string Address = reader.GetString("Address");
-                    string Email = reader.GetString("Email");
-                    string Barcode = reader.GetString("Barcode");
-                    PersonType type;
-                    _ = Enum.TryParse(reader.GetString("Type"), out type); // DO a check
-
-                    Person member;
-
-                    switch (type)
-                    {
-                        case PersonType.Student:
-                            member = new Student();
-                            member.Name = Name;
-                            member.Surname = Surname;
-                            member.ParentName = ParentName;
-                            member.JMBG = JMBG;
-                            member.Phone = Phone;
-                            member.Address = Address;
-                            member.Email = Email;
-                            member.Barcode = Barcode;
-                            member.Type = PersonType.Student;
-                            break;
-                        case PersonType.Employee:
-                            member = new Employee();
-                            member.Name = Name;
-                            member.Surname = Surname;
-                            member.ParentName = ParentName;
-                            member.JMBG = JMBG;
-                            member.Phone = Phone;
-                            member.Address = Address;
-                            member.Email = Email;
-                            member.Barcode = Barcode;
-                            member.Type = PersonType.Employee;
-                            break;
-                        default:
-                            // Handle unknown type
-                            continue;
-                    }
-
-                    members.Add(member);
-                }
-                reader.Close();
-            }
-            catch (Exception ex)
-            {
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
-            }
-            finally
-            {
-                _connection.Close();
-            }
-            return members;
-        }
-
-        public List<Transaction> GetAllTransactions()
-        {
-            List<Transaction> transactions = new List<Transaction>();
-            try
-            {
-                string selectSql = "SELECT * FROM Transactions";
-                MySqlCommand selectCommand = new MySqlCommand(selectSql, _connection);
-                _connection.Open();
-                MySqlDataReader reader = selectCommand.ExecuteReader();
-                while (reader.Read())
-                {
-                    string Id = reader.GetString("Id");
-                    string BookBarcode = reader.GetString("BookBarcode");
-                    string MemberBarcode = reader.GetString("MemberBarcode");
-                    DateTime BorrowDate = reader.GetDateTime("BorrowDate");
-                    DateTime DueDate = reader.GetDateTime("DueDate");
-                    DateTime? ReturnDate = reader.IsDBNull(reader.GetOrdinal("ReturnDate")) ? null : (DateTime)reader.GetDateTime("ReturnDate");
-
-                    Transaction transaction = new Transaction
-                    {
-                        Id = Guid.Parse(Id),
-                        BookBarcode = BookBarcode,
-                        MemberBarcode = MemberBarcode,
-                        BorrowDate = BorrowDate,
-                        DueDate = DueDate,
-                        ReturnDate = ReturnDate
-                    };
-
-                    transactions.Add(transaction);
-                }
-                reader.Close();
-            }
-            catch (Exception ex)
-            {
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
-            }
-            finally
-            {
-                _connection.Close();
-            }
-            return transactions;
-        }
-
-        public List<Book>? FindMatchingBooks(string searchString)
-        {
-            List<Book> books = new List<Book>();
-            if (searchString.Count() == 0 || searchString == null) return books;
-
-            string[] keywords = searchString.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-            string sqlQuery = "SELECT * FROM Books " +
-                "WHERE " +
-                "Title LIKE CONCAT('%', @Keyword0, '%') OR " +
-                "Author LIKE CONCAT('%', @Keyword0, '%') OR " +
-                "ISBN LIKE CONCAT('%', @Keyword0, '%') OR " +
-                "Barcode LIKE CONCAT('%', @Keyword0, '%')";
-
-            for (int i = 1; i < keywords.Length; i++)
-            {
-                sqlQuery += " OR " +
-                "Title LIKE CONCAT('%', " + keywords[i] + ", '%') OR " +
-                "Author LIKE CONCAT('%', " + keywords[i] + ", '%') OR " +
-                "ISBN LIKE CONCAT('%', " + keywords[i] + ", '%') OR " +
-                "Barcode LIKE CONCAT('%', " + keywords[i] + ", '%')";
-            }
-
-            sqlQuery += ";";
-
-            try
-            {
-                MySqlCommand command = new MySqlCommand(sqlQuery, _connection);
-
-                for (int i = 0; i < keywords.Length; i++)
-                {
-                    command.Parameters.AddWithValue("@Keyword" + i, keywords[i]);
-                }
-
-                _connection.Open();
-                MySqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    Book book = new Book
-                    {
-                        Title = reader.GetString("Title"),
-                        Description = reader.GetString("Description"),
-                        Author = reader.GetString("Author"),
-                        ISBN = reader.GetString("ISBN"),
-                        NumberOfCopies = reader.GetInt32("NumberOfCopies"),
-                        NumberOfAvailableCopies = reader.GetInt32("NumberOfAvailableCopies"),
-                        Barcode = reader.GetString("Barcode")
-                    };
-                    books.Add(book);
-                }
-                reader.Close();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("An error occurred: " + ex.Message);
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
-            }
-            finally
-            {
-                _connection.Close();
-            }
-
-            return books;
-        }
+        #endregion
 
         public void Dispose()
         {

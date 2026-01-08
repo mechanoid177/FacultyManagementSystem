@@ -20,34 +20,16 @@ namespace FacultyManagementSystem.Library
     /// thread-safe; concurrent access should be synchronized externally if used in multi-threaded scenarios.</remarks>
     public class Library : ILibrary
     {
-        private IMySQLDatabase _database;
-
-        /// <summary>
-        /// Gets or sets the collection of people who are members of the group.
-        /// </summary>
-        public ObservableCollection<Person> Members { get; set; }
-
-        /// <summary>
-        /// Gets or sets the collection of books associated with this instance.
-        /// </summary>
-        public ObservableCollection<Book> Books { get; set; }
-
-        /// <summary>
-        /// Gets or sets the collection of transactions associated with this instance.
-        /// </summary>
-        public ObservableCollection<Transaction> Transactions { get; set; }
+        private IDatabaseManager _dbManager;
 
         public event EventHandler<MessengerEventArgs> ActionFailed;
 
         /// <summary>
         /// Initializes a new instance of the Library class with empty collections of members, books, and transactions.
         /// </summary>
-        public Library(IMySQLDatabase mySQLDatabase)
+        public Library(IDatabaseManager databaseManager)
         {
-            _database = mySQLDatabase;
-            Members = new ObservableCollection<Person>(_database.GetAllMembers().ToList());
-            Books = new ObservableCollection<Book>(_database.GetAllBooks().ToList());
-            Transactions = new ObservableCollection<Transaction>(_database.GetAllTransactions().ToList());
+            _dbManager = databaseManager;
         }
 
         /// <summary>
@@ -62,7 +44,7 @@ namespace FacultyManagementSystem.Library
         /// unavailable, or the member is not found.</returns>
         public bool IssueBook(string bookBarcode, string memberBarcode)
         {
-            var book = _database.FindBookByBarcode(bookBarcode);
+            var book = _dbManager.FindBookByBarcode(bookBarcode);
 
             if (book == null)
             {
@@ -76,18 +58,22 @@ namespace FacultyManagementSystem.Library
                 return false;
             }
 
-            var member = _database.FindMemberByBarcode(memberBarcode);
+            var member = _dbManager.FindStudentByBarcode(memberBarcode);
 
             if (member == null)
             {
-                OnActionFailed("Member not found.");
-                return false;
+                member = _dbManager.FindEmployeeByBarcode(memberBarcode);
+                if (member == null)
+                {
+                    OnActionFailed("Member not found.");
+                    return false;
+                }
             }
 
             book.NumberOfAvailableCopies -= 1;
             Transaction transaction = new Transaction(Guid.NewGuid(), book.Barcode, memberBarcode, DateTime.Now, DateTime.Now.AddDays(14));
-            _database.InsertNewTransaction(transaction);
-            _database.UpdateBook(book);
+            _dbManager.CreateNewTransaction(transaction);
+            _dbManager.UpdateBook(book);
 
             return true;
         }
@@ -102,21 +88,27 @@ namespace FacultyManagementSystem.Library
         /// <returns>true if the book return is successfully processed; otherwise, false.</returns>
         public bool ReturnBook(string bookBarcode, string memberBarcode)
         {
-            var book = _database.FindBookByBarcode(bookBarcode);
+            var book = _dbManager.FindBookByBarcode(bookBarcode);
 
             if (book == null)
             {
                 OnActionFailed("Book not found.");
                 return false;
             }
-            var member = _database.FindMemberByBarcode(memberBarcode);
+
+            var member = _dbManager.FindStudentByBarcode(memberBarcode);
+
             if (member == null)
             {
-                OnActionFailed("Member not found.");
-                return false;
+                member = _dbManager.FindEmployeeByBarcode(memberBarcode);
+                if (member == null)
+                {
+                    OnActionFailed("Member not found.");
+                    return false;
+                }
             }
 
-            var transaction = _database.FindTransaction(bookBarcode, memberBarcode);
+            var transaction = _dbManager.FindTransaction(bookBarcode, memberBarcode);
 
             if (transaction == null)
             {
@@ -126,8 +118,8 @@ namespace FacultyManagementSystem.Library
 
             transaction.ReturnDate = DateTime.Now;
             book.NumberOfAvailableCopies += 1;
-            _database.UpdateTransaction(transaction);
-            _database.UpdateBook(book);
+            _dbManager.UpdateTransaction(transaction);
+            _dbManager.UpdateBook(book);
 
             return true;
         }
@@ -149,13 +141,13 @@ namespace FacultyManagementSystem.Library
                 return false;
             }
 
-            var existingBook = _database.FindBookByBarcode(barcode);
+            var existingBook = _dbManager.FindBookByBarcode(barcode);
 
             if (existingBook != null)
             {
                 existingBook.NumberOfCopies += numberOfCopies;
                 existingBook.NumberOfAvailableCopies += numberOfCopies;
-                _database.UpdateBook(existingBook);
+                _dbManager.UpdateBook(existingBook);
                 return true;
             }
 
@@ -170,7 +162,7 @@ namespace FacultyManagementSystem.Library
                 NumberOfAvailableCopies = numberOfCopies
             };
 
-            _database.InsertNewBook(book);
+            _dbManager.CreateNewBook(book);
 
             return true;
         }
@@ -182,7 +174,7 @@ namespace FacultyManagementSystem.Library
         /// <returns>true if a book with the specified barcode was found and removed; otherwise, false.</returns>
         public bool RemoveBook(string barcode)
         {
-            var book = _database.FindBookByBarcode(barcode);
+            var book = _dbManager.FindBookByBarcode(barcode);
 
             if (book == null)
             {
@@ -190,7 +182,7 @@ namespace FacultyManagementSystem.Library
                 return false;
             }
 
-            _database.DeleteBook(book);
+            _dbManager.DeleteBook(book);
 
             return true;
         }
@@ -204,7 +196,7 @@ namespace FacultyManagementSystem.Library
         /// <returns>true if a copy was successfully removed; otherwise, false.</returns>
         public bool RemoveBookCopy(string barcode)
         {
-            var book = _database.FindBookByBarcode(barcode);
+            var book = _dbManager.FindBookByBarcode(barcode);
             if (book == null || book.NumberOfCopies == 0)
             {
                 OnActionFailed("Book not found or no copies to remove.");
@@ -216,7 +208,7 @@ namespace FacultyManagementSystem.Library
             if (book.NumberOfAvailableCopies > 0)
             {
                 book.NumberOfAvailableCopies -= 1;
-                _database.UpdateBook(book);
+                _dbManager.UpdateBook(book);
             }
             return true;
         }
@@ -234,7 +226,7 @@ namespace FacultyManagementSystem.Library
         /// <returns>A list of books that match all specified search criteria. The list is empty if no books are found.</returns>
         public List<Book> SearchBooks(string searchString)
         {
-            return _database.FindMatchingBooks(searchString);
+            return _dbManager.FindMatchingBooks(searchString);
         }
 
         protected void OnActionFailed(string message)
@@ -244,7 +236,7 @@ namespace FacultyManagementSystem.Library
 
         public void Dispose()
         {
-            _database?.Dispose();
+            _dbManager?.Dispose();
         }
     }
 }

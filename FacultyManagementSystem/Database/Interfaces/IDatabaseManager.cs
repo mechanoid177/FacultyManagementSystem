@@ -3,7 +3,7 @@ using FacultyManagementSystem.Library;
 
 namespace FacultyManagementSystem.Database.Interfaces
 {
-    public interface IMySqlDatabase
+    public interface IDatabaseManager
     {
         #region Student methods
 
@@ -38,9 +38,9 @@ namespace FacultyManagementSystem.Database.Interfaces
         void CreateNewTransaction(Transaction transaction);
         void UpdateTransaction(Transaction transaction);
         Transaction FindTransaction(string bookBarcode, string memberBarcode);
-
+        
         #endregion
 
-        void Dispose();
+        void Dispose(); 
     }
 }

@@ -6,10 +6,6 @@ namespace FacultyManagementSystem.Library.Interfaces
 {
     public interface ILibrary : IDisposable
     {
-        ObservableCollection<Book> Books { get; set; }
-        ObservableCollection<Person> Members { get; set; }
-        ObservableCollection<Transaction> Transactions { get; set; }
-
         event EventHandler<MessengerEventArgs> ActionFailed;
 
         bool AddBook(string title, string author, string description, string ISBN, string barcode, int numberOfCopies);

@@ -36,8 +36,15 @@ namespace FacultyManagementSystem
                     services.AddSingleton<MainViewModel>();
                     services.AddSingleton<userContolLibrary>();
                     services.AddSingleton<LibraryViewModel>();
+                    services.AddSingleton<IMySqlDatabase, Database.MySqlDatabase>();
+                    services.AddSingleton<Database.DatabaseContext>();
+                    services.AddSingleton<IDatabaseManager, Database.DatabaseManager>();
                     services.AddSingleton<ILibrary, Library.Library>();
-                    services.AddSingleton<IMySQLDatabase, Database.MySQLDatabase>();
+                    
+
+                }).ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    config.AddXmlFile("appsettings.xml", optional: false, reloadOnChange: true);
                 });
     }
 

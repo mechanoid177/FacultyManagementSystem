@@ -1,13 +1,11 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 
 namespace FacultyManagementSystem.Library
 {
     public class Book
     {
-        
-        public Guid Id { get; private set; }
-
         public string Title { get; set; }
 
         public string Description { get; set; }
@@ -22,9 +20,5 @@ namespace FacultyManagementSystem.Library
 
         public string Barcode { get; set; }
 
-        public Book()
-        {
-            Id = Guid.NewGuid();
-        }
     }
 }

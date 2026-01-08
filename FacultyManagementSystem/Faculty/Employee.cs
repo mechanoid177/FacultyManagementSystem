@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FacultyManagementSystem.Faculty
 {
-    public class Employee : Person
+    public class Employee : Student
     {
         public string Role {  get; set; }
 
