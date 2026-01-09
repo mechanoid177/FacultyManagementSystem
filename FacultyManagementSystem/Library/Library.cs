@@ -3,6 +3,7 @@ using FacultyManagementSystem.Database.Interfaces;
 using FacultyManagementSystem.Faculty;
 using FacultyManagementSystem.Library.Interfaces;
 using FacultyManagementSystem.Utility;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,14 +23,19 @@ namespace FacultyManagementSystem.Library
     {
         private IDatabaseManager _dbManager;
 
+        private ILogger<Library> _logger;
+
         public event EventHandler<MessengerEventArgs> ActionFailed;
 
         /// <summary>
         /// Initializes a new instance of the Library class with empty collections of members, books, and transactions.
         /// </summary>
-        public Library(IDatabaseManager databaseManager)
+        public Library(IDatabaseManager databaseManager, ILogger<Library> logger)
         {
+            _logger = logger;
             _dbManager = databaseManager;
+
+            _dbManager.ActionFailed += (s, e) => OnActionFailed(e.Message);
         }
 
         /// <summary>
@@ -49,12 +55,14 @@ namespace FacultyManagementSystem.Library
             if (book == null)
             {
                 OnActionFailed("Book not found.");
+                _logger.LogWarning("Attempted to issue a book that does not exist. Barcode: {Barcode}", bookBarcode);
                 return false;
             }
 
             if (book.NumberOfAvailableCopies == 0)
             {
                 OnActionFailed("No available copies of the book.");
+                _logger.LogWarning("Attempted to issue a book with no available copies. Barcode: {Barcode}", bookBarcode);
                 return false;
             }
 
@@ -66,6 +74,7 @@ namespace FacultyManagementSystem.Library
                 if (member == null)
                 {
                     OnActionFailed("Member not found.");
+                    _logger.LogWarning("Attempted to issue a book to a non-existent member. Member Barcode: {MemberBarcode}", memberBarcode);
                     return false;
                 }
             }
@@ -93,6 +102,7 @@ namespace FacultyManagementSystem.Library
             if (book == null)
             {
                 OnActionFailed("Book not found.");
+                _logger.LogWarning("Attempted to return a book that does not exist. Barcode: {Barcode}", bookBarcode);
                 return false;
             }
 
@@ -104,6 +114,7 @@ namespace FacultyManagementSystem.Library
                 if (member == null)
                 {
                     OnActionFailed("Member not found.");
+                    _logger.LogWarning("Attempted to return a book for a non-existent member. Member Barcode: {MemberBarcode}", memberBarcode);
                     return false;
                 }
             }
@@ -113,6 +124,7 @@ namespace FacultyManagementSystem.Library
             if (transaction == null)
             {
                 OnActionFailed("Was not issued.");
+                _logger.LogWarning("No active transaction found for book return. Book Barcode: {BookBarcode}, Member Barcode: {MemberBarcode}", bookBarcode, memberBarcode);
                 return false;
             }
 
@@ -138,6 +150,7 @@ namespace FacultyManagementSystem.Library
             if (numberOfCopies < 1 || barcode == null)
             {
                 OnActionFailed("Invalid book details provided.");
+                _logger.LogWarning("Attempted to add a book with invalid details. Barcode: {Barcode}, Number of Copies: {NumberOfCopies}", barcode, numberOfCopies);
                 return false;
             }
 
@@ -179,6 +192,7 @@ namespace FacultyManagementSystem.Library
             if (book == null)
             {
                 OnActionFailed("Book not found.");
+                _logger.LogWarning("Attempted to remove a book that does not exist. Barcode: {Barcode}", barcode);
                 return false;
             }
 
@@ -200,6 +214,7 @@ namespace FacultyManagementSystem.Library
             if (book == null || book.NumberOfCopies == 0)
             {
                 OnActionFailed("Book not found or no copies to remove.");
+                _logger.LogWarning("Attempted to remove a copy of a book that does not exist or has no copies. Barcode: {Barcode}", barcode);
                 return false;
             }
 

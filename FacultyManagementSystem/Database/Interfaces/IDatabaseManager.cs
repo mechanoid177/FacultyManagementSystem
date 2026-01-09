@@ -1,10 +1,13 @@
 ﻿using FacultyManagementSystem.Faculty;
 using FacultyManagementSystem.Library;
+using FacultyManagementSystem.Utility;
 
 namespace FacultyManagementSystem.Database.Interfaces
 {
     public interface IDatabaseManager
     {
+        public event EventHandler<MessengerEventArgs> ActionFailed;
+
         #region Student methods
 
         void CreateNewStudent(Student student);

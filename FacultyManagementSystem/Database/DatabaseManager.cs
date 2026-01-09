@@ -1,6 +1,10 @@
 ﻿using FacultyManagementSystem.Database.Interfaces;
 using FacultyManagementSystem.Faculty;
 using FacultyManagementSystem.Library;
+using FacultyManagementSystem.Library.Interfaces;
+using FacultyManagementSystem.Utility;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
 namespace FacultyManagementSystem.Database
@@ -11,13 +15,18 @@ namespace FacultyManagementSystem.Database
         private DatabaseContext _dbContext;
         private bool _useMySql;
         private bool _useEFCore;
+        private ILogger<DatabaseManager> _logger;
 
-        public DatabaseManager(IMySqlDatabase mySqlDatabase, DatabaseContext dbContext)
+        public event EventHandler<MessengerEventArgs> ActionFailed;
+
+        public DatabaseManager(IMySqlDatabase mySqlDatabase, DatabaseContext dbContext, ILogger<DatabaseManager> logger, IConfiguration configuration)
         {
             _mySqlDatabase = mySqlDatabase;
             _dbContext = dbContext;
-            _useMySql = true;
-            _useEFCore = false;
+            _useMySql = bool.Parse(configuration.GetSection("DatabaseInfo")["UseSQL"]);
+            _useEFCore = bool.Parse(configuration.GetSection("DatabaseInfo")["UseEF"]);
+
+            _mySqlDatabase.QueryFailed += (s, e) => OnActionFailed(e.Message);
         }
 
         #region Student methods
@@ -38,7 +47,8 @@ namespace FacultyManagementSystem.Database
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error inserting new student: {ex.Message}");
+                    OnActionFailed($"Error inserting new student: {ex.Message}");
+                    _logger.LogError($"Error inserting new student: {ex.Message}");
                 }
             }
             else
@@ -59,7 +69,8 @@ namespace FacultyManagementSystem.Database
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error finding student by barcode: {ex.Message}");
+                    OnActionFailed($"Error finding student by barcode: {ex.Message}");
+                    _logger.LogError($"Error finding student by barcode: {ex.Message}");
                     return null;
                 }
             }
@@ -84,7 +95,8 @@ namespace FacultyManagementSystem.Database
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error updating student: {ex.Message}");
+                    OnActionFailed($"Error updating student: {ex.Message}");
+                    _logger.LogError($"Error updating student: {ex.Message}");
                 }
             }
             else
@@ -106,7 +118,8 @@ namespace FacultyManagementSystem.Database
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error deleting student: {ex.Message}");
+                    OnActionFailed($"Error deleting student: {ex.Message}");
+                    _logger.LogError($"Error deleting student: {ex.Message}");
                 }
             }
             else
@@ -134,7 +147,8 @@ namespace FacultyManagementSystem.Database
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error inserting new employee: {ex.Message}");
+                    OnActionFailed($"Error inserting new employee: {ex.Message}");
+                    _logger.LogError($"Error inserting new employee: {ex.Message}");
                 }
             }
             else
@@ -155,7 +169,8 @@ namespace FacultyManagementSystem.Database
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error finding employee by barcode: {ex.Message}");
+                    OnActionFailed($"Error finding employee by barcode: {ex.Message}");
+                    _logger.LogError($"Error finding employee by barcode: {ex.Message}");
                     return null;
                 }
             }
@@ -181,7 +196,8 @@ namespace FacultyManagementSystem.Database
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error updating employee: {ex.Message}");
+                    OnActionFailed($"Error updating employee: {ex.Message}");
+                    _logger.LogError($"Error updating employee: {ex.Message}");
                 }
             }
             else
@@ -204,7 +220,8 @@ namespace FacultyManagementSystem.Database
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error deleting employee: {ex.Message}");
+                    OnActionFailed($"Error deleting employee: {ex.Message}");
+                    _logger.LogError($"Error deleting employee: {ex.Message}");
                 }
             }
             else
@@ -231,7 +248,8 @@ namespace FacultyManagementSystem.Database
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error inserting new book: {ex.Message}");
+                    OnActionFailed($"Error inserting new book: {ex.Message}");
+                    _logger.LogError($"Error inserting new book: {ex.Message}");
                 }
             }
             else
@@ -254,7 +272,8 @@ namespace FacultyManagementSystem.Database
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error updating book: {ex.Message}");
+                    OnActionFailed($"Error updating book: {ex.Message}");
+                    _logger.LogError($"Error updating book: {ex.Message}");
                 }
             }
             else
@@ -277,7 +296,8 @@ namespace FacultyManagementSystem.Database
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error deleting book: {ex.Message}");
+                    OnActionFailed($"Error deleting book: {ex.Message}");
+                    _logger.LogError($"Error deleting book: {ex.Message}");
                 }
             }
             else
@@ -299,7 +319,8 @@ namespace FacultyManagementSystem.Database
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error finding book by barcode: {ex.Message}");
+                    OnActionFailed($"Error finding book by barcode: {ex.Message}");
+                    _logger.LogError($"Error finding book by barcode: {ex.Message}");
                 }
             }
             else
@@ -330,7 +351,8 @@ namespace FacultyManagementSystem.Database
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error finding matching books: {ex.Message}");
+                    OnActionFailed($"Error finding matching books: {ex.Message}");
+                    _logger.LogError($"Error finding matching books: {ex.Message}");
                 }
             }
             else
@@ -359,7 +381,8 @@ namespace FacultyManagementSystem.Database
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error creating new transaction: {ex.Message}");
+                    OnActionFailed($"Error creating new transaction: {ex.Message}");
+                    _logger.LogError($"Error creating new transaction: {ex.Message}");
 
                 }
             }
@@ -382,7 +405,8 @@ namespace FacultyManagementSystem.Database
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error updating transaction: {ex.Message}");
+                    OnActionFailed($"Error updating transaction: {ex.Message}");
+                    _logger.LogError($"Error updating transaction: {ex.Message}");
                 }
             }
             else
@@ -406,7 +430,8 @@ namespace FacultyManagementSystem.Database
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error finding transaction: {ex.Message}");
+                    OnActionFailed($"Error finding transaction: {ex.Message}");
+                    _logger.LogError($"Error finding transaction: {ex.Message}");
                 }
             }
             else
@@ -416,6 +441,11 @@ namespace FacultyManagementSystem.Database
         }
 
         #endregion
+
+        protected void OnActionFailed(string message)
+        {
+            ActionFailed?.Invoke(this, new MessengerEventArgs(message));
+        }
 
         public void Dispose()
         {

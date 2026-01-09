@@ -1,7 +1,9 @@
 ﻿using FacultyManagementSystem.Database.Interfaces;
 using FacultyManagementSystem.Faculty;
 using FacultyManagementSystem.Library;
+using FacultyManagementSystem.Utility;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -16,9 +18,13 @@ namespace FacultyManagementSystem.Database
     {
         private MySqlConnection _connection;
         private IConfiguration _configuration;
+        private ILogger<MySqlDatabase> _logger;
 
-        public MySqlDatabase(IConfiguration configuration)
+        public event EventHandler<MessengerEventArgs> QueryFailed;
+
+        public MySqlDatabase(IConfiguration configuration, ILogger<MySqlDatabase> logger)
         {
+            _logger = logger;
             _configuration = configuration;
             _connection = new MySqlConnection(_configuration.GetSection("DatabaseInfo")["ConnectionString"]);
         }
@@ -52,8 +58,8 @@ namespace FacultyManagementSystem.Database
             }
             catch (Exception ex)
             {
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
+                OnQueryFailed(ex.Message);
+                _logger.LogError("A MySql error occurred: " + ex.Message);
             }
             finally
             {
@@ -92,8 +98,8 @@ namespace FacultyManagementSystem.Database
             }
             catch (Exception ex)
             {
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
+                OnQueryFailed(ex.Message);
+                _logger.LogError("A MySql error occurred: " + ex.Message);
             }
             finally
             {
@@ -135,8 +141,8 @@ namespace FacultyManagementSystem.Database
             }
             catch (Exception ex)
             {
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
+                OnQueryFailed(ex.Message);
+                _logger.LogError("A MySql error occurred: " + ex.Message);
             }
             finally
             {
@@ -160,8 +166,8 @@ namespace FacultyManagementSystem.Database
             }
             catch (Exception ex)
             {
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
+                OnQueryFailed(ex.Message);
+                _logger.LogError("A MySql error occurred: " + ex.Message);
             }
             finally
             {
@@ -199,8 +205,8 @@ namespace FacultyManagementSystem.Database
             }
             catch (Exception ex)
             {
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
+                OnQueryFailed(ex.Message);
+                _logger.LogError("A MySql error occurred: " + ex.Message);
             }
             finally
             {
@@ -239,8 +245,8 @@ namespace FacultyManagementSystem.Database
             }
             catch (Exception ex)
             {
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
+                OnQueryFailed(ex.Message);
+                _logger.LogError("A MySql error occurred: " + ex.Message);
             }
             finally
             {
@@ -281,8 +287,8 @@ namespace FacultyManagementSystem.Database
             }
             catch (Exception ex)
             {
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
+                OnQueryFailed(ex.Message);
+                _logger.LogError("A MySql error occurred: " + ex.Message);
             }
             finally
             {
@@ -306,8 +312,7 @@ namespace FacultyManagementSystem.Database
             }
             catch (Exception ex)
             {
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
+                _logger.LogError("A MySql error occurred: " + ex.Message);
             }
             finally
             {
@@ -340,8 +345,8 @@ namespace FacultyManagementSystem.Database
             }
             catch (Exception ex)
             {
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
+                OnQueryFailed(ex.Message);
+                _logger.LogError("A MySql error occurred: " + ex.Message);
             }
             finally
             {
@@ -379,8 +384,8 @@ namespace FacultyManagementSystem.Database
             }
             catch (Exception ex)
             {
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
+                OnQueryFailed(ex.Message);
+                _logger.LogError("A MySql error occurred: " + ex.Message);
             }
             finally
             {
@@ -403,8 +408,8 @@ namespace FacultyManagementSystem.Database
             }
             catch (Exception ex)
             {
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
+                OnQueryFailed(ex.Message);
+                _logger.LogError("A MySql error occurred: " + ex.Message);
             }
             finally
             {
@@ -466,9 +471,8 @@ namespace FacultyManagementSystem.Database
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("An error occurred: " + ex.Message);
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
+                OnQueryFailed(ex.Message);
+                _logger.LogError("A MySql error occurred: " + ex.Message);
             }
             finally
             {
@@ -509,8 +513,8 @@ namespace FacultyManagementSystem.Database
             }
             catch (Exception ex)
             {
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
+                OnQueryFailed(ex.Message);
+                _logger.LogError("A MySql error occurred: " + ex.Message);
             }
             finally
             {
@@ -545,9 +549,8 @@ namespace FacultyManagementSystem.Database
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("An error occurred: " + ex.Message);
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
+                OnQueryFailed(ex.Message);
+                _logger.LogError("A MySql error occurred: " + ex.Message);
             }
             finally
             {
@@ -581,8 +584,8 @@ namespace FacultyManagementSystem.Database
             }
             catch (Exception ex)
             {
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
+                OnQueryFailed(ex.Message);
+                _logger.LogError("A MySql error occurred: " + ex.Message);
             }
             finally
             {
@@ -620,9 +623,8 @@ namespace FacultyManagementSystem.Database
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("An error occurred: " + ex.Message);
-                // Handle exception (e.g., log it)
-                //Console.WriteLine("An error occurred: " + ex.Message);
+                OnQueryFailed(ex.Message);
+                _logger.LogError("A MySql error occurred: " + ex.Message);
             }
             finally
             {
@@ -633,6 +635,11 @@ namespace FacultyManagementSystem.Database
         }
 
         #endregion
+
+        protected void OnQueryFailed(string message)
+        {
+            QueryFailed?.Invoke(this, new MessengerEventArgs(message));
+        }
 
         public void Dispose()
         {
