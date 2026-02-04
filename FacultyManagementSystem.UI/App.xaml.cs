@@ -1,7 +1,8 @@
 ﻿using FacultyManagementSystem.Database.Interfaces;
 using FacultyManagementSystem.Library.Interfaces;
-using FacultyManagementSystem.View.UserControls;
-using FacultyManagementSystem.ViewModel;
+using FacultyManagementSystem.UI;
+using FacultyManagementSystem.UI.View.UserControls;
+using FacultyManagementSystem.UI.ViewModel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -37,7 +38,7 @@ namespace FacultyManagementSystem
                 {
                     services.AddSingleton<MainWindow>();
                     services.AddSingleton<MainViewModel>();
-                    services.AddSingleton<userContolLibrary>();
+                    //services.AddSingleton<UserContolLibrary>();
                     services.AddSingleton<LibraryViewModel>();
                     services.AddSingleton<IMySqlDatabase, Database.MySqlDatabase>();
                     services.AddSingleton<Database.DatabaseContext>();

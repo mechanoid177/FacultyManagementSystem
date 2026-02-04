@@ -1,17 +1,7 @@
-﻿using FacultyManagementSystem.View.UserControls;
-using FacultyManagementSystem.ViewModel;
-using System.Text;
+﻿using FacultyManagementSystem.UI.ViewModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-namespace FacultyManagementSystem
+namespace FacultyManagementSystem.UI
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -25,6 +15,43 @@ namespace FacultyManagementSystem
             InitializeComponent();
             DataContext = MainViewModel = mainViewModel;
             this.ucLibrary.GetService(libraryViewModel);
+        }
+
+        private void btnFaculty_Click(object sender, RoutedEventArgs e)
+        {
+            this.ucFaculty.Visibility = Visibility.Visible;
+            this.ucLibrary.Visibility = Visibility.Collapsed;
+            this.ucStudents.Visibility = Visibility.Collapsed;
+            this.ucLogin.Visibility = Visibility.Collapsed;
+        }
+
+        private void btnLibrary_Click(object sender, RoutedEventArgs e)
+        {
+            this.ucFaculty.Visibility = Visibility.Collapsed;
+            this.ucLibrary.Visibility = Visibility.Visible;
+            this.ucStudents.Visibility = Visibility.Collapsed;
+            this.ucLogin.Visibility = Visibility.Collapsed;
+        }
+
+        private void btnStudents_Click(object sender, RoutedEventArgs e)
+        {
+            this.ucFaculty.Visibility = Visibility.Collapsed;
+            this.ucLibrary.Visibility = Visibility.Collapsed;
+            this.ucStudents.Visibility = Visibility.Visible;
+            this.ucLogin.Visibility = Visibility.Collapsed;
+        }
+
+        private void btnSettings_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnLogin_Click(object sender, RoutedEventArgs e)
+        {
+            this.ucLogin.Visibility = Visibility.Visible;
+            this.ucFaculty.Visibility = Visibility.Collapsed;
+            this.ucLibrary.Visibility = Visibility.Collapsed;
+            this.ucStudents.Visibility = Visibility.Collapsed;
         }
     }
 }

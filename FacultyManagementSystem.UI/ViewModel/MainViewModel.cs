@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FacultyManagementSystem.ViewModel
+namespace FacultyManagementSystem.UI.ViewModel
 {
     public class MainViewModel
     {

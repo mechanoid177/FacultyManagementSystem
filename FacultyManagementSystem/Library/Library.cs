@@ -147,10 +147,10 @@ namespace FacultyManagementSystem.Library
         /// <param name="numberOfCopies">The total number of copies of the book to add. Must be greater than or equal to 1.</param>
         public bool AddBook(string title, string author, string description, string ISBN, string barcode, int numberOfCopies)
         {
-            if (numberOfCopies < 1 || barcode == null)
+            if (barcode == null)
             {
                 OnActionFailed("Invalid book details provided.");
-                _logger.LogWarning("Attempted to add a book with invalid details. Barcode: {Barcode}, Number of Copies: {NumberOfCopies}", barcode, numberOfCopies);
+                _logger.LogWarning("Attempted to add a book with invalid details. Barcode: {Barcode}", barcode, numberOfCopies);
                 return false;
             }
 
@@ -211,21 +211,24 @@ namespace FacultyManagementSystem.Library
         public bool RemoveBookCopy(string barcode)
         {
             var book = _dbManager.FindBookByBarcode(barcode);
-            if (book == null || book.NumberOfCopies == 0)
+            if (book == null)
             {
                 OnActionFailed("Book not found or no copies to remove.");
                 _logger.LogWarning("Attempted to remove a copy of a book that does not exist or has no copies. Barcode: {Barcode}", barcode);
                 return false;
             }
-
-            book.NumberOfCopies -= 1;
-
-            if (book.NumberOfAvailableCopies > 0)
+            else if (book.NumberOfAvailableCopies > 0)
             {
                 book.NumberOfAvailableCopies -= 1;
                 _dbManager.UpdateBook(book);
+                return true;
             }
-            return true;
+            else
+            {
+                OnActionFailed("No available copies to remove.");
+                _logger.LogWarning("Attempted to remove a copy of a book with no available copies. Barcode: {Barcode}", barcode);
+                return false;
+            }
         }
 
         /// <summary>

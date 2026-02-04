@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using FacultyManagementSystem.Library.Interfaces;
 using FacultyManagementSystem.Utility;
 
-namespace FacultyManagementSystem.ViewModel
+namespace FacultyManagementSystem.UI.ViewModel
 {
     public partial class LibraryViewModel : ObservableObject, IDisposable
     {

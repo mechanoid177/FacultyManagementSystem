@@ -1,6 +1,6 @@
 ﻿using FacultyManagementSystem.Library.Interfaces;
 using FacultyManagementSystem.Utility;
-using FacultyManagementSystem.ViewModel;
+using FacultyManagementSystem.UI.ViewModel;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
@@ -16,16 +16,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace FacultyManagementSystem.View.UserControls
+namespace FacultyManagementSystem.UI.View.UserControls
 {
     /// <summary>
     /// Interaction logic for userContolLibrary.xaml
     /// </summary>
-    public partial class userContolLibrary : UserControl
+    public partial class UserControlLibrary : UserControl
     {
         public LibraryViewModel LibraryViewModel;
 
-        public userContolLibrary()
+        public UserControlLibrary()
         {
             InitializeComponent();
         }
@@ -35,7 +35,8 @@ namespace FacultyManagementSystem.View.UserControls
             LibraryViewModel = libraryViewModel;
             DataContext = LibraryViewModel;
 
-            this.listViewSearchedBooks.ItemsSource = LibraryViewModel.SearchResults;
+            //this.listViewSearchedBooks.ItemsSource = LibraryViewModel.SearchResults;
+            this.listBoxSearchedBooks.ItemsSource = LibraryViewModel.SearchResults;
 
             LibraryViewModel.MessageReceived += OnMessageReceived;
         }

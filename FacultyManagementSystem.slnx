@@ -2,7 +2,11 @@
   <Folder Name="/Solution Items/">
     <File Path="Notes.txt" />
   </Folder>
-  <Folder Name="/Source/" />
-  <Project Path="FacultyManagementSystem.UI/FacultyManagementSystem.UI.csproj" />
-  <Project Path="FacultyManagementSystem/FacultyManagementSystem.csproj" />
+  <Folder Name="/Source/">
+    <Project Path="FacultyManagementSystem.UI/FacultyManagementSystem.UI.csproj" />
+    <Project Path="FacultyManagementSystem/FacultyManagementSystem.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="FacultyManagementSystem.Tests/FacultyManagementSystem.Tests.csproj" />
+  </Folder>
 </Solution>
