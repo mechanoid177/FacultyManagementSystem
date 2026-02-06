@@ -10,11 +10,12 @@ namespace FacultyManagementSystem.UI
     {
         public MainViewModel MainViewModel;
 
-        public MainWindow(MainViewModel mainViewModel, LibraryViewModel libraryViewModel)
+        public MainWindow(MainViewModel mainViewModel, LibraryViewModel libraryViewModel, LoginViewModel loginViewModel)
         {
             InitializeComponent();
             DataContext = MainViewModel = mainViewModel;
             this.ucLibrary.GetService(libraryViewModel);
+            this.ucLogin.GetService(loginViewModel);
         }
 
         private void btnFaculty_Click(object sender, RoutedEventArgs e)

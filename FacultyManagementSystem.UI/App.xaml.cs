@@ -39,6 +39,7 @@ namespace FacultyManagementSystem
                     services.AddSingleton<MainWindow>();
                     services.AddSingleton<MainViewModel>();
                     //services.AddSingleton<UserContolLibrary>();
+                    services.AddSingleton<LoginViewModel>();
                     services.AddSingleton<LibraryViewModel>();
                     services.AddSingleton<IMySqlDatabase, Database.MySqlDatabase>();
                     services.AddSingleton<Database.DatabaseContext>();

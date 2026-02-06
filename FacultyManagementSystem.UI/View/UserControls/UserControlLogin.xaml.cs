@@ -1,5 +1,7 @@
-﻿using System;
+﻿using FacultyManagementSystem.UI.ViewModel;
+using System;
 using System.Collections.Generic;
+using System.Security;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,7 +23,11 @@ namespace FacultyManagementSystem.UI.View.UserControls
         public UserControlLogin()
         {
             InitializeComponent();
-            DataContext = new ViewModel.LoginViewModel();
+        }
+
+        public void GetService(LoginViewModel loginViewModel)
+        {
+            DataContext = loginViewModel;
         }
     }
 }

@@ -5,7 +5,11 @@ using FacultyManagementSystem.Library.Interfaces;
 using FacultyManagementSystem.Utility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Org.BouncyCastle.Asn1.Pkcs;
 using System.Diagnostics;
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace FacultyManagementSystem.Database
 {
@@ -28,6 +32,49 @@ namespace FacultyManagementSystem.Database
 
             _mySqlDatabase.QueryFailed += (s, e) => OnActionFailed(e.Message);
         }
+
+        #region Common methods
+
+        public bool AuthenticateUser(NetworkCredential credential)
+        {
+            if (_useMySql)
+            {
+                return _mySqlDatabase.AuthenticateUser(credential);
+            }
+            else if (_useEFCore)
+            {
+                try
+                {
+                    var userEmployee = _dbContext.Employees.FirstOrDefault(e => e.Username == credential.UserName);
+                    if (userEmployee != null)
+                    {
+                        byte[] bytes = SHA256.HashData(Encoding.UTF8.GetBytes(credential.Password));
+                        return userEmployee.Password == Convert.ToString(bytes);
+                    }
+
+                    var userStudent = _dbContext.Students.FirstOrDefault(e => e.Username == credential.UserName);
+                    if (userStudent != null)
+                    {
+                        byte[] bytes = SHA256.HashData(Encoding.UTF8.GetBytes(credential.Password));
+                        return userStudent.Password == Convert.ToString(bytes);
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    OnActionFailed($"Error authenticating user: {ex.Message}");
+                    _logger.LogError($"Error authenticating user: {ex.Message}");
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        #endregion
 
         #region Student methods
 

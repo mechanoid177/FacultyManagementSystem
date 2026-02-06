@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Net;
 using System.Text;
 using System.Xml.Linq;
 
@@ -29,6 +30,45 @@ namespace FacultyManagementSystem.Database
             _connection = new MySqlConnection(_configuration.GetSection("DatabaseInfo")["ConnectionString"]);
         }
 
+        #region Common methods
+
+        public bool AuthenticateUser(NetworkCredential credential)
+        {
+            bool isAuthenticated = false;
+            try
+            {
+                string sqlQuery = "SELECT COUNT(*) FROM Employees WHERE Username = @Username AND Password = SHA2(@Password, 256)";
+                MySqlCommand command = new MySqlCommand(sqlQuery, _connection);
+                command.Parameters.AddWithValue("@Username", credential.UserName);
+                command.Parameters.AddWithValue("@Password", credential.Password);
+                _connection.Open();
+                int userCount = Convert.ToInt32(command.ExecuteScalar());
+                isAuthenticated = userCount > 0;
+                _connection.Close();
+
+                if (isAuthenticated) return true;
+
+                sqlQuery = "SELECT COUNT(*) FROM Students WHERE Username = @Username AND Password = SHA2(@Password, 256)";
+                command = new MySqlCommand(sqlQuery, _connection);
+                command.Parameters.AddWithValue("@Username", credential.UserName);
+                command.Parameters.AddWithValue("@Password", credential.Password);
+                _connection.Open();
+                userCount = Convert.ToInt32(command.ExecuteScalar());
+                isAuthenticated = userCount > 0;
+            }
+            catch (Exception ex)
+            {
+                OnQueryFailed(ex.Message);
+                _logger.LogError("A MySql error occurred: " + ex.Message);
+            }
+            finally
+            {
+                _connection.Close();
+            }
+            return isAuthenticated;
+        }
+
+        #endregion
 
         #region Student methods
 

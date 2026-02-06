@@ -1,12 +1,19 @@
 ﻿using FacultyManagementSystem.Faculty;
 using FacultyManagementSystem.Library;
 using FacultyManagementSystem.Utility;
+using System.Net;
 
 namespace FacultyManagementSystem.Database.Interfaces
 {
     public interface IDatabaseManager
     {
         public event EventHandler<MessengerEventArgs> ActionFailed;
+
+        #region Common methods
+
+        public bool AuthenticateUser(NetworkCredential credential);
+
+        #endregion
 
         #region Student methods
 

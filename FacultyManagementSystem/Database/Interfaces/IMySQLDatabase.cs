@@ -1,12 +1,19 @@
 ﻿using FacultyManagementSystem.Faculty;
 using FacultyManagementSystem.Library;
 using FacultyManagementSystem.Utility;
+using System.Net;
 
 namespace FacultyManagementSystem.Database.Interfaces
 {
     public interface IMySqlDatabase
     {
         public event EventHandler<MessengerEventArgs> QueryFailed;
+
+        #region Common methods
+
+        bool AuthenticateUser(NetworkCredential credential);  
+
+        #endregion
 
         #region Student methods
 

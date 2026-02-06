@@ -3,16 +3,27 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:FacultyManagementSystem.UI.View.UserControls"
+             xmlns:userControls="clr-namespace:FacultyManagementSystem.UI.View.UserControls"
              mc:Ignorable="d" 
              Height="1080" Width="1536">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
+
+    <UserControl.Visibility>
+        <Binding Path="IsViewVisible" Mode="TwoWay" Converter="{StaticResource BooleanToVisibilityConverter}"/>
+    </UserControl.Visibility>
+    
     <Grid>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="400">
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Width="400">
             <TextBlock Text="Login" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,20"/>
             <TextBlock Text="Username:" FontSize="20" Margin="0,0,0,5"/>
-            <TextBox FontSize="20" Margin="0,0,0,15"/>
+            <TextBox Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="20" Margin="0,0,0,15"/>
             <TextBlock Text="Password:" FontSize="20" Margin="0,0,0,5"/>
-            <PasswordBox FontSize="20" Margin="0,0,0,25" Con/>
+            <userControls:UserControlBindablePasswordBox Margin="0,0,0,25" Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Text="{Binding ErrorMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="16" Foreground="Blue" TextDecorations="Underline" HorizontalAlignment="Right" Margin="0,0,0,15"/>
+            <Button Content="Login" FontSize="20" Padding="10" HorizontalAlignment="Center" Width="100" Command="{Binding LoginCommand}"/>
         </StackPanel>
     </Grid>
 </UserControl>
