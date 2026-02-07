@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FacultyManagementSystem.UI.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -11,16 +12,21 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace FacultyManagementSystem.UI.View.UserControls
+namespace FacultyManagementSystem.UI.View
 {
     /// <summary>
-    /// Interaction logic for UserControlStudents.xaml
+    /// Interaction logic for FacultyView.xaml
     /// </summary>
-    public partial class UserControlStudents : UserControl
+    public partial class FacultyView : UserControl
     {
-        public UserControlStudents()
+        public FacultyView()
         {
             InitializeComponent();
+        }
+
+        public void GetService(FacultyViewModel facultyViewModel)
+        {
+            DataContext = facultyViewModel;
         }
     }
 }

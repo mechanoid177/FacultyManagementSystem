@@ -1,7 +1,5 @@
-﻿using FacultyManagementSystem.Library.Interfaces;
+﻿using FacultyManagementSystem.UI.ViewModel;
 using FacultyManagementSystem.Utility;
-using FacultyManagementSystem.UI.ViewModel;
-using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,16 +14,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace FacultyManagementSystem.UI.View.UserControls
+namespace FacultyManagementSystem.UI.View
 {
     /// <summary>
-    /// Interaction logic for userContolLibrary.xaml
+    /// Interaction logic for LibraryView.xaml
     /// </summary>
-    public partial class UserControlLibrary : UserControl
+    public partial class LibraryView : UserControl
     {
         public LibraryViewModel LibraryViewModel;
 
-        public UserControlLibrary()
+        public LibraryView()
         {
             InitializeComponent();
         }

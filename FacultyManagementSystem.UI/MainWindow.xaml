@@ -4,9 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FacultyManagementSystem"
-        xmlns:userControls="clr-namespace:FacultyManagementSystem.UI.View.UserControls"
         mc:Ignorable="d"
-        Title="Faculty Managment System" Height="1080" Width="1920" WindowState="Maximized" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
+        Title="Faculty Managment System" 
+        Height="1080" Width="1920" 
+        WindowState="Maximized" 
+        WindowStartupLocation="CenterScreen" 
+        ResizeMode="CanMinimize">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -14,17 +17,25 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Column="0" Background="LightGray">
-            <Button Name="btnFaculty" Content="Faculty" Margin="10" Click="btnFaculty_Click"/>
-            <Button Name="btnLibrary" Content="Library" Margin="10" Click="btnLibrary_Click"/>
-            <Button Name="btnStudents" Content="Students" Margin="10" Click="btnStudents_Click"/>
-            <Button Name="btnSettings" Content="Settings" Margin="10" Click="btnSettings_Click"/>
-            <Button Name="btnLogin" Content="Login" Margin="10" Click="btnLogin_Click"/>
+            <Button Name="btnFaculty" 
+                    Content="Faculty" 
+                    Margin="10"
+                    Command="{Binding ShowFacultyViewCommand}"/>
+            <Button Name="btnLibrary" 
+                    Content="Library" 
+                    Margin="10"
+                    Command="{Binding ShowLibraryViewCommand}" />
+            <Button Name="btnStudents" 
+                    Content="Students"
+                    Margin="10"
+                    Command="{Binding ShowStudentViewCommand}" />
+            <Button Name="btnLogin" 
+                    Content="Login" 
+                    Margin="10"
+                    Command="{Binding ShowLoginViewCommand}" />
         </StackPanel>
 
-
-        <userControls:UserControlLibrary x:Name="ucLibrary" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1" Visibility="Hidden"/>
-        <userControls:UserControlStudents x:Name="ucStudents" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1" Visibility="Hidden"/>
-        <userControls:UserControlFaculty x:Name="ucFaculty" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1"/>
-        <userControls:UserControlLogin x:Name="ucLogin" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1" Visibility="Hidden"/>
+        <ContentControl Grid.Column="1"
+                        Content="{Binding SelectedViewModel}"/>
     </Grid>
 </Window>

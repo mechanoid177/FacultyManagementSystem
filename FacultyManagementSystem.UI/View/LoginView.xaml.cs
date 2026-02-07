@@ -1,7 +1,6 @@
 ﻿using FacultyManagementSystem.UI.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.Security;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,14 +12,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace FacultyManagementSystem.UI.View.UserControls
+namespace FacultyManagementSystem.UI.View
 {
     /// <summary>
-    /// Interaction logic for UserControlLogin.xaml
+    /// Interaction logic for LoginView.xaml
     /// </summary>
-    public partial class UserControlLogin : UserControl
+    public partial class LoginView : UserControl
     {
-        public UserControlLogin()
+        public LoginView()
         {
             InitializeComponent();
         }

@@ -1,13 +1,16 @@
 ﻿using FacultyManagementSystem.Database.Interfaces;
 using FacultyManagementSystem.Library.Interfaces;
 using FacultyManagementSystem.UI;
+using FacultyManagementSystem.UI.Service;
+using FacultyManagementSystem.UI.View;
 using FacultyManagementSystem.UI.View.UserControls;
 using FacultyManagementSystem.UI.ViewModel;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Windows;
 using Serilog;
+using System.Windows;
 
 namespace FacultyManagementSystem
 {
@@ -38,15 +41,19 @@ namespace FacultyManagementSystem
                 {
                     services.AddSingleton<MainWindow>();
                     services.AddSingleton<MainViewModel>();
-                    //services.AddSingleton<UserContolLibrary>();
+                    services.AddSingleton<LoginView>();
+                    services.AddSingleton<LibraryView>();
+                    services.AddSingleton<FacultyView>();
+                    services.AddSingleton<StudentView>();
                     services.AddSingleton<LoginViewModel>();
                     services.AddSingleton<LibraryViewModel>();
+                    services.AddSingleton<FacultyViewModel>();
+                    services.AddSingleton<StudentViewModel>();
+                    services.AddSingleton<ResolveServices>();
                     services.AddSingleton<IMySqlDatabase, Database.MySqlDatabase>();
                     services.AddSingleton<Database.DatabaseContext>();
                     services.AddSingleton<IDatabaseManager, Database.DatabaseManager>();
                     services.AddSingleton<ILibrary, Library.Library>();
-
-
                 }).ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     config.AddXmlFile("appsettings.xml", optional: false, reloadOnChange: true);
