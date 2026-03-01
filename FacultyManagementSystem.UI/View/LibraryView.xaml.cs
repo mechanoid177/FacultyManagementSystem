@@ -34,7 +34,7 @@ namespace FacultyManagementSystem.UI.View
             DataContext = LibraryViewModel;
 
             //this.listViewSearchedBooks.ItemsSource = LibraryViewModel.SearchResults;
-            this.listBoxSearchedBooks.ItemsSource = LibraryViewModel.SearchResults;
+            //this.listBoxSearchedBooks.ItemsSource = LibraryViewModel.SearchResults;
 
             LibraryViewModel.MessageReceived += OnMessageReceived;
         }

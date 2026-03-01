@@ -1,4 +1,4 @@
-﻿<Window x:Class="FacultyManagementSystem.UI.MainWindow"
+﻿<Window xmlns:Components="clr-namespace:FacultyManagementSystem.UI.View.Components"  x:Class="FacultyManagementSystem.UI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -11,31 +11,33 @@
         WindowStartupLocation="CenterScreen" 
         ResizeMode="CanMinimize">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="4*"/>
-        </Grid.ColumnDefinitions>
-
-        <StackPanel Grid.Column="0" Background="LightGray">
-            <Button Name="btnFaculty" 
-                    Content="Faculty" 
-                    Margin="10"
-                    Command="{Binding ShowFacultyViewCommand}"/>
-            <Button Name="btnLibrary" 
-                    Content="Library" 
-                    Margin="10"
-                    Command="{Binding ShowLibraryViewCommand}" />
-            <Button Name="btnStudents" 
-                    Content="Students"
-                    Margin="10"
-                    Command="{Binding ShowStudentViewCommand}" />
-            <Button Name="btnLogin" 
-                    Content="Login" 
-                    Margin="10"
-                    Command="{Binding ShowLoginViewCommand}" />
-        </StackPanel>
-
-        <ContentControl Grid.Column="1"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="100"/>
+        </Grid.RowDefinitions>
+        <Menu>
+            <MenuItem Header="Login" 
+                      Command="{Binding ShowLoginViewCommand}"/>
+            <MenuItem Header="Employees" 
+                      Command="{Binding ShowEmployeesViewCommand}"/>
+            <MenuItem Header="Students"
+                      Command="{Binding ShowStudentViewCommand}"/>
+            <MenuItem Header="Administration" 
+                      Command="{Binding ShowAdminViewCommand}"/>
+            <MenuItem Header="Library" 
+                      Command="{Binding ShowLibraryViewCommand}">
+                <MenuItem Header="Add/Remove book"
+                          Command="{Binding ShowLibraryAddBookViewCommand}"/>
+                <MenuItem Header="Search books" 
+                          Command="{Binding ShowLibrarySearchBooksViewCommand}"/>
+                <MenuItem Header="Issue/Return book"
+                          Command="{Binding ShowLibraryIssueBookViewCommand}"/>
+            </MenuItem>
+        </Menu>
+        
+        <ContentControl Grid.Row="2"
                         Content="{Binding SelectedViewModel}"/>
     </Grid>
 </Window>

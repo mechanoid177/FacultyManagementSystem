@@ -460,7 +460,7 @@ namespace FacultyManagementSystem.Database
         public List<Book>? FindMatchingBooks(string searchString)
         {
             List<Book> books = new List<Book>();
-            if (searchString.Count() == 0 || searchString == null) return books;
+            if (searchString == null || searchString.Count() == 0) return books;
 
             string[] keywords = searchString.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -474,10 +474,10 @@ namespace FacultyManagementSystem.Database
             for (int i = 1; i < keywords.Length; i++)
             {
                 sqlQuery += " OR " +
-                "Title LIKE CONCAT('%', " + keywords[i] + ", '%') OR " +
-                "Author LIKE CONCAT('%', " + keywords[i] + ", '%') OR " +
-                "ISBN LIKE CONCAT('%', " + keywords[i] + ", '%') OR " +
-                "Barcode LIKE CONCAT('%', " + keywords[i] + ", '%')";
+                "Title LIKE CONCAT('%', @Keyword" + i + ", '%') OR " +
+                "Author LIKE CONCAT('%', @Keyword" + i + ", '%') OR " +
+                "ISBN LIKE CONCAT('%', @Keyword" + i + ", '%') OR " +
+                "Barcode LIKE CONCAT('%', @Keyword" + i + ", '%')";
             }
 
             sqlQuery += ";";

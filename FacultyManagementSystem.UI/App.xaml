@@ -3,10 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:FacultyManagementSystem"
              xmlns:viewModel="clr-namespace:FacultyManagementSystem.UI.ViewModel"
-             xmlns:view="clr-namespace:FacultyManagementSystem.UI.View">
+             xmlns:viewModelLibrary="clr-namespace:FacultyManagementSystem.UI.ViewModel.Library"
+             xmlns:view="clr-namespace:FacultyManagementSystem.UI.View"
+             xmlns:components="clr-namespace:FacultyManagementSystem.UI.View.Components">
     <Application.Resources>
-        <DataTemplate DataType="{x:Type TypeName=viewModel:LibraryViewModel}">
-            <view:LibraryView/>
+        <DataTemplate DataType="{x:Type TypeName=viewModelLibrary:LibrarySearchBooksViewModel}">
+            <components:LibrarySearchBooks/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type TypeName=viewModelLibrary:LibraryAddBookViewModel}">
+            <components:LibraryAddBook/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type TypeName=viewModelLibrary:LibraryIssueBookViewModel}">
+            <components:LibraryIssueBook/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type TypeName=viewModel:FacultyViewModel}">
             <view:FacultyView/>

@@ -1,4 +1,5 @@
-﻿using FacultyManagementSystem.UI.ViewModel;
+﻿using FacultyManagementSystem.UI.Service;
+using FacultyManagementSystem.UI.ViewModel;
 using System.Windows;
 
 namespace FacultyManagementSystem.UI
@@ -10,7 +11,7 @@ namespace FacultyManagementSystem.UI
     {
         public MainViewModel MainViewModel;
 
-        public MainWindow(MainViewModel mainViewModel)
+        public MainWindow(MainViewModel mainViewModel, ResolveServices resolve)
         {
             InitializeComponent();
             DataContext = MainViewModel = mainViewModel;

@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace FacultyManagementSystem.UI.View.UserControls
+namespace FacultyManagementSystem.UI.View.Components
 {
     /// <summary>
     /// Interaction logic for UserControlBindablePasswordBox.xaml

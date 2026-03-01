@@ -1,0 +1,115 @@
+﻿<UserControl x:Class="FacultyManagementSystem.UI.View.Components.LibrarySearchBooks"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FacultyManagementSystem.UI.View.Components"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <DataTemplate x:Key="MyListBoxDataTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBox Grid.Column="0" 
+                         Grid.Row="0" 
+                         Text="{Binding Title}" 
+                         Background="Transparent" 
+                         BorderThickness="0" 
+                         IsReadOnly="True" 
+                         TextWrapping="Wrap" 
+                         FontSize="22" 
+                         FontWeight="Bold" />
+                <StackPanel Grid.Column="0" 
+                            Grid.Row="1" 
+                            Orientation="Horizontal" 
+                            Margin="0,5,0,15">
+                    <TextBlock Text="   Author: " 
+                               FontSize="20"/>
+                    <TextBox Text="{Binding Author}" 
+                             Background="Transparent" 
+                             BorderThickness="0" 
+                             IsReadOnly="True" 
+                             TextWrapping="Wrap" 
+                             FontSize="20" 
+                             Margin="0,0,20,0"/>
+                    <TextBlock Text="ISBN: " 
+                               FontSize="20"/>
+                    <TextBox Text="{Binding ISBN}" 
+                             Background="Transparent" 
+                             BorderThickness="0" 
+                             IsReadOnly="True" 
+                             TextWrapping="Wrap" 
+                             FontSize="20" 
+                             Margin="0,0,20,0"/>
+                    <TextBlock Text="Barcode: " 
+                               FontSize="20"/>
+                    <TextBox Text="{Binding Barcode}" 
+                             Background="Transparent" 
+                             BorderThickness="0" 
+                             IsReadOnly="True" 
+                             TextWrapping="Wrap" 
+                             FontSize="20" 
+                             Margin="0,0,20,0"/>
+                    <TextBlock Text="Copies: " 
+                               FontSize="20"/>
+                    <TextBox Text="{Binding NumberOfCopies}" 
+                             Background="Transparent" 
+                             BorderThickness="0" 
+                             IsReadOnly="True" 
+                             TextWrapping="Wrap" 
+                             FontSize="20" 
+                             Margin="0,0,20,0"/>
+                    <TextBlock Text="Available Copies: " 
+                               FontSize="20"/>
+                    <TextBox Text="{Binding NumberOfAvailableCopies}" 
+                             Background="Transparent" 
+                             BorderThickness="0" 
+                             IsReadOnly="True" 
+                             TextWrapping="Wrap" 
+                             FontSize="20"/>
+                </StackPanel>
+
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="5*"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" 
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Left"
+                     FontSize="22" 
+                     Text="{Binding SearchKeywords}" 
+                     Margin="21,0,0,0"
+                     Width="598"/>
+            <Button Grid.Column="1" 
+                    Content="Search" 
+                    HorizontalAlignment="Right" 
+                    FontSize="24"
+                    Height="50"
+                    Width="150" 
+                    Margin="10" 
+                    Command="{Binding SearchBookCommand}"/>
+        </Grid>
+
+        <ListBox Grid.Row="1" 
+                 Name="listBoxSearchedBooks" 
+                 ItemTemplate="{StaticResource MyListBoxDataTemplate}"
+                 Height="500" 
+                 Margin="10"/>
+    </Grid>
+</UserControl>

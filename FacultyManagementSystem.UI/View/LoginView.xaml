@@ -4,9 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FacultyManagementSystem.UI.View" 
-             xmlns:userControls="clr-namespace:FacultyManagementSystem.UI.View.UserControls"
-             mc:Ignorable="d" 
-             Height="1080" Width="1536">
+             xmlns:userControls="clr-namespace:FacultyManagementSystem.UI.View.Components"
+             mc:Ignorable="d" >
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </UserControl.Resources>
@@ -17,7 +16,7 @@
 
     <Grid>
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Width="400">
-            <TextBlock Text="Login" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+            <TextBlock Text="Login" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,20"/>
             <TextBlock Text="Username:" FontSize="20" Margin="0,0,0,5"/>
             <TextBox Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="20" Margin="0,0,0,15"/>
             <TextBlock Text="Password:" FontSize="20" Margin="0,0,0,5"/>

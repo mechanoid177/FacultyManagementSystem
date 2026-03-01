@@ -3,8 +3,9 @@ using FacultyManagementSystem.Library.Interfaces;
 using FacultyManagementSystem.UI;
 using FacultyManagementSystem.UI.Service;
 using FacultyManagementSystem.UI.View;
-using FacultyManagementSystem.UI.View.UserControls;
+using FacultyManagementSystem.UI.View.Components;
 using FacultyManagementSystem.UI.ViewModel;
+using FacultyManagementSystem.UI.ViewModel.Library;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,17 +40,27 @@ namespace FacultyManagementSystem
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostingContext, services) =>
                 {
+                    services.AddSingleton<ResolveServices>();
+
+                    // Main View
                     services.AddSingleton<MainWindow>();
                     services.AddSingleton<MainViewModel>();
+
+                    // Library Views
+                    services.AddSingleton<LibrarySearchBooks>();
+                    services.AddSingleton<LibrarySearchBooksViewModel>();
+                    services.AddSingleton<LibraryAddBook>();
+                    services.AddSingleton<LibraryAddBookViewModel>();
+                    services.AddSingleton<LibraryIssueBook>();
+                    services.AddSingleton<LibraryIssueBookViewModel>();
+
                     services.AddSingleton<LoginView>();
-                    services.AddSingleton<LibraryView>();
                     services.AddSingleton<FacultyView>();
                     services.AddSingleton<StudentView>();
                     services.AddSingleton<LoginViewModel>();
-                    services.AddSingleton<LibraryViewModel>();
                     services.AddSingleton<FacultyViewModel>();
                     services.AddSingleton<StudentViewModel>();
-                    services.AddSingleton<ResolveServices>();
+                    
                     services.AddSingleton<IMySqlDatabase, Database.MySqlDatabase>();
                     services.AddSingleton<Database.DatabaseContext>();
                     services.AddSingleton<IDatabaseManager, Database.DatabaseManager>();

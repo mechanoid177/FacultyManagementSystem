@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FacultyManagementSystem.UI.ViewModel.Library;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +9,9 @@ namespace FacultyManagementSystem.UI.ViewModel
 {
     public partial class MainViewModel : ObservableObject
     {
-        private LibraryViewModel _libraryViewModel;
+        private LibrarySearchBooksViewModel _librarySearchBooksViewModel;
+        private LibraryAddBookViewModel _libraryAddBookViewModel;
+        private LibraryIssueBookViewModel _libraryIssueBookViewModel;
         private LoginViewModel _loginViewModel;
         private FacultyViewModel _facultyViewModel;
         private StudentViewModel _studentViewModel;
@@ -16,9 +19,17 @@ namespace FacultyManagementSystem.UI.ViewModel
         [ObservableProperty]
 		private ObservableObject _selectedViewModel;
 
-        public MainViewModel(LibraryViewModel libraryViewModel, LoginViewModel loginViewModel, FacultyViewModel facultyViewModel, StudentViewModel studentViewModel)
+        public MainViewModel(
+            LibrarySearchBooksViewModel librarySearchBooksViewModel, 
+            LibraryAddBookViewModel libraryAddBookViewModel,
+            LibraryIssueBookViewModel libraryIssueBookViewModel,
+            LoginViewModel loginViewModel, 
+            FacultyViewModel facultyViewModel, 
+            StudentViewModel studentViewModel)
         {
-            _libraryViewModel = libraryViewModel;
+            _librarySearchBooksViewModel = librarySearchBooksViewModel;
+            _libraryAddBookViewModel = libraryAddBookViewModel;
+            _libraryIssueBookViewModel = libraryIssueBookViewModel;
             _loginViewModel = loginViewModel;
             _facultyViewModel = facultyViewModel;
             _studentViewModel = studentViewModel;
@@ -27,9 +38,21 @@ namespace FacultyManagementSystem.UI.ViewModel
 
 
         [RelayCommand]
-        private void ShowLibraryView()
+        private void ShowLibrarySearchBooksView()
         {
-            SelectedViewModel = _libraryViewModel;
+            SelectedViewModel = _librarySearchBooksViewModel;
+        }
+
+        [RelayCommand]
+        private void ShowLibraryAddBookView()
+        {
+            SelectedViewModel = _libraryAddBookViewModel;
+        }
+
+        [RelayCommand]
+        private void ShowLibraryIssueBookView()
+        {
+            SelectedViewModel = _libraryIssueBookViewModel;
         }
 
         [RelayCommand]

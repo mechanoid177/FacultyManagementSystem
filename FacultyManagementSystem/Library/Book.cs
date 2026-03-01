@@ -19,6 +19,5 @@ namespace FacultyManagementSystem.Library
         public int NumberOfAvailableCopies { get; set; }
 
         public string Barcode { get; set; }
-
     }
 }
